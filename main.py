@@ -48,47 +48,54 @@ def get_market_data():
 def get_news():
     """取得最新財經新聞標題"""
     feeds = [
-        ('路透科技', 'https://feeds.reuters.com/reuters/technologyNews'),
-        ('路透財經', 'https://feeds.reuters.com/reuters/businessNews'),
+        ('Yahoo財經', 'https://finance.yahoo.com/news/rssindex'),
+        ('MarketWatch', 'https://feeds.content.dowjones.io/public/rss/mw_realtimeheadlines'),
+        ('Seeking Alpha', 'https://seekingalpha.com/feed.xml'),
     ]
     news_items = []
     for source, url in feeds:
         try:
-            feed = feedparser.parse(url)
+            feed = feedparser.parse(url, request_headers={'User-Agent': 'Mozilla/5.0'})
             for entry in feed.entries[:3]:
-                news_items.append(f"• {entry.title}")
-        except:
-            pass
-    return '\n'.join(news_items[:6]) if news_items else "新聞暫時無法取得"
+                title = entry.get('title', '')
+                if title:
+                    news_items.append(f"• [{source}] {title}")
+            if news_items:
+                break  # 有拿到就停，不用全部試
+        except Exception as e:
+            print(f"{source} 失敗：{e}")
+            continue
+    return '\n'.join(news_items[:5]) if news_items else "新聞暫時無法取得"
 
 
 def generate_analysis(market_data, news):
-    """用Gemini生成今日分析"""
+    """用Groq生成今日分析"""
     today = datetime.now().strftime('%Y/%m/%d')
-    prompt = f"""你是一個每天發投資簡報給朋友的人，用繁體中文，語氣輕鬆像朋友聊天。
+    
+    prompt = f"""今天是 {today}。
 
-今天是 {today}。
-
-【市場數據】
+以下是今日市場數據：
 {market_data}
 
-【今日新聞標題】
-{news}
+請用繁體中文，針對以下三點各寫1-2句話，語氣像朋友聊天，不要廢話：
 
-請寫一段200字以內的分析，包含：
-1. 今天市場整體感覺（一句話）
-2. 有沒有特別值得注意的事（如果有的話）
-3. 對長期持有VT、QQQ、台灣ETF的人，今天有什麼值得知道的
+1. 【今天漲跌的主因】根據數據，今天整體是偏多還是偏空？最強和最弱的是哪個？
+2. 【長期ETF投資者要注意什麼】對持有VT、QQQ、0050這類ETF的人，今天的數據有沒有需要留意的訊號？還是繼續持有就好？
+3. 【一句話總結】今天市場給你的感覺是什麼？
 
-最後一行固定加上：「以上是資訊分享，不是買賣建議 😊」
+最後固定加一行：「以上是資訊分享，不是買賣建議 😊」
 
-不要用條列式，直接寫成自然的段落。"""
+不要加標題，不要條列，直接寫成對話口吻的段落。"""
 
     try:
         response = groq_client.chat.completions.create(
             model="llama-3.3-70b-versatile",
-            messages=[{"role": "user", "content": prompt}],
-            max_tokens=500
+            messages=[
+                {"role": "system", "content": "你是一個懂投資的朋友，說話直接、有重點，不說廢話，不說『我無法預測市場』這類沒用的話。"},
+                {"role": "user", "content": prompt}
+            ],
+            max_tokens=400,
+            temperature=0.7
         )
         return response.choices[0].message.content
     except Exception as e:
