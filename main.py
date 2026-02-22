@@ -15,14 +15,19 @@ groq_client = Groq(api_key=GROQ_API_KEY)
 def get_market_data():
     """取得主要市場指數和ETF數據"""
     symbols = {
+        '道瓊工業': '^DJI',
         '美股S&P500': '^GSPC',
         '那斯達克': '^IXIC',
-        '台灣加權': '^TWII',
+        '費城半導體': '^SOX',
+        '德國股市': '^GDAXI',
+        '法國股市': '^FCHI',
+        '英國股市': '^FTSE',
         'VT全球ETF': 'VT',
         'QQQ科技ETF': 'QQQ',
-        'SOXX半導體': 'SOXX',
+        
+        '台灣加權': '^TWII',
         '台灣50(0050)': '0050.TW',
-        '元大台灣高息(0056)': '0056.TW',
+        '台積電(2330)': '2330.TW',
     }
     lines = []
     for name, sym in symbols.items():
