@@ -1,0 +1,30 @@
+name: Daily Investment Briefing
+
+on:
+  schedule:
+    # 每天台灣時間早上 8:00（UTC 00:00）
+    - cron: '0 0 * * *'
+  workflow_dispatch:
+    # 這行讓你可以手動觸發測試
+
+jobs:
+  send-briefing:
+    runs-on: ubuntu-latest
+    steps:
+      - name: 取得程式碼
+        uses: actions/checkout@v4
+
+      - name: 設定Python環境
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: 安裝套件
+        run: pip install -r requirements.txt
+
+      - name: 執行Bot
+        run: python main.py
+        env:
+          TELEGRAM_TOKEN: ${{ secrets.TELEGRAM_TOKEN }}
+          TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
+          GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
