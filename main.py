@@ -124,20 +124,20 @@ def main():
     print("正在取得市場數據...")
     market_data = get_market_data()
 
-    print("正在取得新聞...")
-    news = get_news()
+    # print("正在取得新聞...")
+    # news = get_news()
 
-    print("正在生成AI分析...")
-    analysis = generate_analysis(market_data, news)
+    # print("正在生成AI分析...")
+    # analysis = generate_analysis(market_data, news)
 
     message = (
         f"📊 每日投資簡報 {datetime.now().strftime('%Y/%m/%d')}\n\n"
         f"市場快照\n"
-        f"{market_data}\n\n"
-        f"今日新聞\n"
-        f"{news}\n\n"
-        f"🤖 今日分析\n"
-        f"{analysis}"
+        f"{market_data}"
+        # f"今日新聞\n"
+        # f"{news}\n\n"
+        # f"🤖 今日分析\n"
+        # f"{analysis}"
     )
 
     print("發送到Telegram...")
