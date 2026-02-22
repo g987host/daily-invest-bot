@@ -127,6 +127,8 @@ def main():
         f"📊 每日投資簡報 {datetime.now().strftime('%Y/%m/%d')}\n\n"
         f"市場快照\n"
         f"{market_data}\n\n"
+        f"今日新聞\n"
+        f"{news}\n\n"
         f"🤖 今日分析\n"
         f"{analysis}"
     )
