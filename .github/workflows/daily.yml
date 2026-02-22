@@ -3,7 +3,7 @@ name: Daily Investment Briefing
 on:
   schedule:
     # 每天台灣時間早上 8:00（UTC 00:00）
-    - cron: '0 0 * * *'
+    - cron: '0 0 * * 2-6'
   workflow_dispatch:
     # 這行讓你可以手動觸發測試
 
