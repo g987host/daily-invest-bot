@@ -1,2 +1,2 @@
 # daily-invest-bot
-每日投資簡報 Telegram Bot
+每日歐美股指數推播 Telegram Bot
