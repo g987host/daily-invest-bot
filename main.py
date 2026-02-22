@@ -3,15 +3,13 @@ import feedparser
 import yfinance as yf
 import requests
 from datetime import datetime
-import google.generativeai as genai
+from groq import Groq
 
 # 從環境變數讀取（不要在這裡直接填密碼）
 TELEGRAM_TOKEN = os.environ['TELEGRAM_TOKEN']
 TELEGRAM_CHAT_ID = os.environ['TELEGRAM_CHAT_ID']
-GEMINI_API_KEY = os.environ['GEMINI_API_KEY']
-
-genai.configure(api_key=GEMINI_API_KEY)
-model = genai.GenerativeModel('gemini-2.0-flash')
+GROQ_API_KEY = os.environ['GROQ_API_KEY']
+groq_client = Groq(api_key=GROQ_API_KEY)
 
 
 def get_market_data():
@@ -82,8 +80,12 @@ def generate_analysis(market_data, news):
 不要用條列式，直接寫成自然的段落。"""
 
     try:
-        response = model.generate_content(prompt)
-        return response.text
+        response = groq_client.chat.completions.create(
+            model="llama-3.3-70b-versatile",
+            messages=[{"role": "user", "content": prompt}],
+            max_tokens=500
+        )
+        return response.choices[0].message.content
     except Exception as e:
         return f"AI分析暫時無法生成：{e}"
 
