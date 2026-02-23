@@ -10,6 +10,14 @@ on:
         description: 'Shiller CAPE 當前數值（查 multpl.com/shiller-pe）'
         required: false
         default: ''
+      pmi_prev:
+        description: 'ISM PMI 前期數值（上個月，用來判斷趨勢）'
+        required: false
+        default: ''
+      pmi_value:
+        description: 'ISM製造業PMI（查 ismworld.org 或 investing.com）'
+        required: false
+        default: ''
 
 jobs:
   monthly-check:
