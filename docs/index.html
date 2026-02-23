@@ -2,7 +2,7 @@
 <html lang="zh-TW">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
 <meta http-equiv="refresh" content="3600">
 <title>投資情報日報 · 2026年02月23日</title>
 <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=Noto+Sans+TC:wght@300;400;500;600;700&family=Noto+Serif+TC:wght@700;900&display=swap" rel="stylesheet">
@@ -18,67 +18,65 @@ body{background:var(--bg);color:var(--text);font-family:"Noto Sans TC",sans-seri
 a{color:var(--blue);text-decoration:none;}
 a:hover{text-decoration:underline;}
 
-.header{background:linear-gradient(135deg,#1a2744,#0f1117);border-bottom:1px solid var(--border);padding:32px 24px;text-align:center;}
+.header{background:linear-gradient(135deg,#1a2744,#0f1117);border-bottom:1px solid var(--border);padding:28px 24px;text-align:center;}
 .header-date{font-family:"IBM Plex Mono",monospace;font-size:11px;color:var(--amber);letter-spacing:3px;margin-bottom:8px;}
-.header-title{font-family:"Noto Serif TC",serif;font-size:clamp(20px,4vw,34px);font-weight:900;color:#fff;margin-bottom:6px;}
+.header-title{font-family:"Noto Serif TC",serif;font-size:clamp(20px,4vw,32px);font-weight:900;color:#fff;margin-bottom:6px;}
 .header-sub{font-size:12px;color:var(--text2);font-family:"IBM Plex Mono",monospace;}
 
-.nav{display:flex;justify-content:center;gap:8px;flex-wrap:wrap;padding:14px 24px;background:var(--bg2);border-bottom:1px solid var(--border);position:sticky;top:0;z-index:50;}
-.nav a{font-family:"IBM Plex Mono",monospace;font-size:11px;color:var(--text2);padding:5px 12px;border:1px solid var(--border);border-radius:20px;transition:all .2s;}
+.nav{display:flex;justify-content:center;gap:8px;flex-wrap:wrap;padding:12px 24px;background:var(--bg2);border-bottom:1px solid var(--border);position:sticky;top:0;z-index:50;}
+.nav a{font-family:"IBM Plex Mono",monospace;font-size:11px;color:var(--text2);padding:5px 12px;border:1px solid var(--border);border-radius:20px;transition:all .15s;white-space:nowrap;}
 .nav a:hover{color:var(--amber);border-color:var(--amber);text-decoration:none;}
 
-.main{max-width:900px;margin:0 auto;padding:32px 24px;display:grid;grid-template-columns:1fr 1fr;gap:24px;}
+.main{max-width:960px;margin:0 auto;padding:28px 20px;display:grid;grid-template-columns:1fr 1fr;gap:20px;}
 .full{grid-column:1/-1;}
 @media(max-width:640px){.main{grid-template-columns:1fr;}.full{grid-column:1;}}
 
 .card{background:var(--bg2);border:1px solid var(--border);border-radius:8px;padding:20px;}
-.card-title{font-family:"IBM Plex Mono",monospace;font-size:10px;color:var(--amber);letter-spacing:2px;text-transform:uppercase;margin-bottom:14px;display:flex;align-items:center;gap:8px;}
-.card-title::before{content:"▸";}
+.card-title{font-family:"IBM Plex Mono",monospace;font-size:10px;color:var(--amber);letter-spacing:2px;text-transform:uppercase;margin-bottom:14px;}
+.card-title::before{content:"▸ ";}
 
 table{width:100%;border-collapse:collapse;}
-th{font-family:"IBM Plex Mono",monospace;font-size:10px;color:var(--text2);padding:6px 8px;text-align:left;border-bottom:1px solid var(--border);letter-spacing:1px;}
-td{padding:8px;border-bottom:1px solid rgba(42,51,71,.5);font-size:13px;}
+th{font-family:"IBM Plex Mono",monospace;font-size:10px;color:var(--text2);padding:6px 8px;text-align:left;border-bottom:1px solid var(--border);}
+td{padding:8px;border-bottom:1px solid rgba(42,51,71,.4);font-size:13px;font-family:"IBM Plex Mono",monospace;}
 tr:last-child td{border-bottom:none;}
-tr:hover td{background:rgba(245,158,11,.04);}
+tr:hover td{background:rgba(245,158,11,.03);}
 
-.macro-row{display:flex;justify-content:space-between;align-items:center;padding:8px 0;border-bottom:1px solid rgba(42,51,71,.5);font-size:13px;}
+.macro-row{display:flex;justify-content:space-between;align-items:center;padding:8px 0;border-bottom:1px solid rgba(42,51,71,.4);font-size:13px;}
 .macro-row:last-child{border-bottom:none;}
+.muted{color:var(--text2);font-size:12px;}
 
-.news-item{padding:10px 0;border-bottom:1px solid rgba(42,51,71,.4);}
+/* 新聞 */
+.news-item{padding:10px 0;border-bottom:1px solid rgba(42,51,71,.35);}
 .news-item:last-child{border-bottom:none;}
-.news-source{font-family:"IBM Plex Mono",monospace;font-size:9px;color:var(--text2);background:var(--bg3);padding:2px 7px;border-radius:10px;margin-right:8px;letter-spacing:1px;}
-.news-title{font-size:13px;color:var(--text);display:inline;}
+.news-source{font-family:"IBM Plex Mono",monospace;font-size:9px;color:var(--text2);background:var(--bg3);padding:2px 7px;border-radius:10px;margin-right:6px;letter-spacing:1px;white-space:nowrap;}
+.news-title{font-size:13px;color:var(--text);font-weight:500;}
 .news-title:hover{color:var(--amber);}
+.news-en{display:block;font-size:11px;color:var(--text2);margin-top:2px;font-family:"IBM Plex Mono",monospace;}
 
-.ai-analysis p{margin-bottom:14px;line-height:1.9;color:var(--text);}
+/* 巨人肩膀 */
+.giant-card{background:var(--bg3);border:1px solid var(--border);border-radius:6px;padding:16px;margin-bottom:12px;}
+.giant-card:last-child{margin-bottom:0;}
+.giant-header{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:10px;gap:12px;}
+.giant-name{font-size:14px;font-weight:700;color:#fff;display:block;margin-bottom:3px;}
+.giant-focus{font-family:"IBM Plex Mono",monospace;font-size:10px;color:var(--blue);}
+.giant-link{font-family:"IBM Plex Mono",monospace;font-size:10px;color:var(--amber);white-space:nowrap;padding:4px 10px;border:1px solid rgba(245,158,11,.3);border-radius:4px;}
+.giant-link:hover{background:rgba(245,158,11,.1);text-decoration:none;}
+.giant-summary{font-size:13px;color:var(--text);line-height:1.8;background:rgba(0,0,0,.2);padding:12px;border-radius:4px;border-left:3px solid var(--amber);}
+
+/* AI分析 */
+.ai-analysis p{margin-bottom:14px;line-height:1.9;}
 .ai-analysis p:last-child{margin-bottom:0;color:var(--text2);font-size:12px;}
 
-.analyst-card{background:var(--bg3);border:1px solid var(--border);border-radius:6px;padding:14px;margin-bottom:10px;}
-.analyst-card:last-child{margin-bottom:0;}
-.analyst-top{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:4px;flex-wrap:wrap;gap:4px;}
-.analyst-name{font-size:13px;font-weight:600;color:#fff;}
-.analyst-platform{font-family:"IBM Plex Mono",monospace;font-size:10px;color:var(--blue);background:rgba(59,130,246,.1);padding:2px 8px;border-radius:10px;}
-.analyst-focus{font-size:12px;color:var(--text);margin-bottom:3px;}
-.analyst-why{font-size:12px;color:var(--green);margin-bottom:5px;}
-.analyst-link{font-family:"IBM Plex Mono",monospace;font-size:10px;color:var(--text2);}
-
-.sec-item{display:flex;align-items:center;gap:8px;padding:9px 0;border-bottom:1px solid rgba(42,51,71,.4);flex-wrap:wrap;}
-.sec-item:last-child{border-bottom:none;}
-.sec-tag{font-family:"IBM Plex Mono",monospace;font-size:10px;background:rgba(167,139,250,.12);color:var(--purple);padding:2px 8px;border-radius:3px;white-space:nowrap;}
-.sec-company{font-size:12px;color:var(--amber);font-weight:600;white-space:nowrap;}
-.sec-title{font-size:12px;color:var(--text);flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
-.sec-date{font-family:"IBM Plex Mono",monospace;font-size:10px;color:var(--text2);white-space:nowrap;}
-
-.footer{text-align:center;padding:32px 24px;font-family:"IBM Plex Mono",monospace;font-size:11px;color:var(--text2);border-top:1px solid var(--border);margin-top:24px;}
-.update-badge{display:inline-block;background:rgba(34,197,94,.1);color:var(--green);border:1px solid rgba(34,197,94,.25);padding:4px 12px;border-radius:20px;font-size:10px;letter-spacing:1px;}
+.footer{text-align:center;padding:28px;font-family:"IBM Plex Mono",monospace;font-size:11px;color:var(--text2);border-top:1px solid var(--border);}
+.badge{display:inline-block;background:rgba(34,197,94,.1);color:var(--green);border:1px solid rgba(34,197,94,.25);padding:4px 12px;border-radius:20px;font-size:10px;}
 </style>
 </head>
 <body>
 
 <div class="header">
-  <div class="header-date">▸ 2026年02月23日 週一 · 更新於 05:01 UTC</div>
+  <div class="header-date">▸ 2026年02月23日 週一 · 更新於 05:16 UTC</div>
   <div class="header-title">📊 每日投資情報日報</div>
-  <div class="header-sub">市場數據 · 總體經濟 · 產業新聞 · SEC申報 · AI分析整理</div>
+  <div class="header-sub">市場快照 · 總體經濟 · 產業新聞（中文）· 來源重點摘要 · AI分析</div>
 </div>
 
 <div class="nav">
@@ -86,161 +84,136 @@ tr:hover td{background:rgba(245,158,11,.04);}
   <a href="#macro">總體經濟</a>
   <a href="#analysis">AI分析</a>
   <a href="#news">產業新聞</a>
-  <a href="#sec">SEC申報</a>
-  <a href="#analysts">追蹤資源</a>
+  <a href="#giants">來源摘要</a>
 </div>
 
 <div class="main">
 
-  <!-- 市場快照 -->
   <div class="card" id="market">
     <div class="card-title">市場快照</div>
     <table>
       <thead><tr><th>標的</th><th>價格</th><th>漲跌</th></tr></thead>
-      <tbody>
-        <tr>
+      <tbody><tr>
           <td>道瓊工業</td>
           <td style="font-family:'IBM Plex Mono',monospace;">49625.97</td>
-          <td style="color:#22c55e;font-weight:600;font-family:'IBM Plex Mono',monospace;">▲+0.47%</td>
-        </tr>
-        <tr>
+          <td style="color:#22c55e;font-weight:600;">▲+0.47%</td>
+        </tr><tr>
           <td>美股S&P500</td>
           <td style="font-family:'IBM Plex Mono',monospace;">6909.51</td>
-          <td style="color:#22c55e;font-weight:600;font-family:'IBM Plex Mono',monospace;">▲+0.69%</td>
-        </tr>
-        <tr>
+          <td style="color:#22c55e;font-weight:600;">▲+0.69%</td>
+        </tr><tr>
           <td>那斯達克</td>
           <td style="font-family:'IBM Plex Mono',monospace;">22886.07</td>
-          <td style="color:#22c55e;font-weight:600;font-family:'IBM Plex Mono',monospace;">▲+0.90%</td>
-        </tr>
-        <tr>
+          <td style="color:#22c55e;font-weight:600;">▲+0.90%</td>
+        </tr><tr>
           <td>費城半導體</td>
           <td style="font-family:'IBM Plex Mono',monospace;">8260.42</td>
-          <td style="color:#22c55e;font-weight:600;font-family:'IBM Plex Mono',monospace;">▲+1.07%</td>
-        </tr>
-        <tr>
+          <td style="color:#22c55e;font-weight:600;">▲+1.07%</td>
+        </tr><tr>
           <td>德國股市</td>
           <td style="font-family:'IBM Plex Mono',monospace;">25260.69</td>
-          <td style="color:#22c55e;font-weight:600;font-family:'IBM Plex Mono',monospace;">▲+0.87%</td>
-        </tr>
-        <tr>
+          <td style="color:#22c55e;font-weight:600;">▲+0.87%</td>
+        </tr><tr>
           <td>法國股市</td>
           <td style="font-family:'IBM Plex Mono',monospace;">8515.49</td>
-          <td style="color:#22c55e;font-weight:600;font-family:'IBM Plex Mono',monospace;">▲+1.39%</td>
-        </tr>
-        <tr>
+          <td style="color:#22c55e;font-weight:600;">▲+1.39%</td>
+        </tr><tr>
           <td>英國股市</td>
           <td style="font-family:'IBM Plex Mono',monospace;">10686.90</td>
-          <td style="color:#22c55e;font-weight:600;font-family:'IBM Plex Mono',monospace;">▲+0.56%</td>
-        </tr>
-        <tr>
+          <td style="color:#22c55e;font-weight:600;">▲+0.56%</td>
+        </tr><tr>
           <td>VT全球ETF</td>
           <td style="font-family:'IBM Plex Mono',monospace;">147.95</td>
-          <td style="color:#22c55e;font-weight:600;font-family:'IBM Plex Mono',monospace;">▲+0.87%</td>
-        </tr>
-        <tr>
+          <td style="color:#22c55e;font-weight:600;">▲+0.87%</td>
+        </tr><tr>
           <td>QQQ科技ETF</td>
           <td style="font-family:'IBM Plex Mono',monospace;">608.81</td>
-          <td style="color:#22c55e;font-weight:600;font-family:'IBM Plex Mono',monospace;">▲+0.88%</td>
-        </tr>
-        <tr>
+          <td style="color:#22c55e;font-weight:600;">▲+0.88%</td>
+        </tr><tr>
           <td>AI科技 (BOTZ)</td>
           <td style="font-family:'IBM Plex Mono',monospace;">39.02</td>
-          <td style="color:#22c55e;font-weight:600;font-family:'IBM Plex Mono',monospace;">▲+0.98%</td>
+          <td style="color:#22c55e;font-weight:600;">▲+0.98%</td>
         </tr></tbody>
     </table>
   </div>
 
-  <!-- 總體經濟 -->
   <div class="card" id="macro">
     <div class="card-title">總體經濟指標</div>
-    <div class="macro-row"><span>美國10年期公債殖利率</span><span style="color:#22c55e;font-family:'IBM Plex Mono',monospace;">▼ 4.08</span></div><div class="macro-row"><span>美國2年期公債殖利率</span><span style="color:#22c55e;font-family:'IBM Plex Mono',monospace;">─ 3.47</span></div><div class="macro-row"><span>聯邦基金利率</span><span style="color:#22c55e;font-family:'IBM Plex Mono',monospace;">▼ 3.64</span></div><div class="macro-row"><span>殖利率曲線（10Y-2Y）= 0.61%</span><span style="color:#22c55e;font-family:'IBM Plex Mono',monospace;"> ✓ 正常</span></div>
+    <div class="macro-row"><span>美國10年期公債殖利率</span><span style="color:#22c55e;font-family:'IBM Plex Mono',monospace;">▼ 4.08</span></div><div class="macro-row"><span>美國2年期公債殖利率</span><span style="color:#22c55e;font-family:'IBM Plex Mono',monospace;">─ 3.47</span></div><div class="macro-row"><span>聯邦基金利率</span><span style="color:#22c55e;font-family:'IBM Plex Mono',monospace;">▼ 3.64</span></div><div class="macro-row"><span>殖利率曲線 10Y-2Y = 0.61%</span><span style="color:#22c55e;font-family:'IBM Plex Mono',monospace;"> ✓ 正常</span></div>
   </div>
 
-  <!-- AI分析 -->
   <div class="card full" id="analysis">
-    <div class="card-title">🤖 今日AI分析（Llama 3.3 70B）</div>
-    <div class="ai-analysis"><p>【市場今天在說什麼】：</p><p>今天的漲跌主因是科技股的強勢表現，尤其是半導體和AI相關的股票。費城半導體指數（SOXX）和AI科技ETF（BOTZ）分別上漲1.07%和0.98%，成為今天的領頭羊。這說明了市場對科技股的信心仍然高漲，尤其是那些與AI相關的公司。</p><p>【總體環境怎麼樣】：</p><p>利率和債券數據顯示，美國10年期公債殖利率為4.08%，而2年期公債殖利率為3.47%，殖利率曲線處於正常狀態。這對長期ETF投資者來說是個好的信號，因為正常的殖利率曲線意味著經濟仍然在穩定的軌道上，減少了經濟衰退的風險。</p><p>【本週值得注意的事】：</p><p>從新聞和數據看，AI相關的公司如Samsung Electro-Mechanics正在經歷強勁的需求，MLCC訂單量大幅增加。這對持有VT、QQQ、SOXX等科技相關ETF的人來說是個好的消息，因為這意味著科技股的強勢表現可能會持續。然而，需要留意的是美國消費者債務的增加，可能會對經濟產生負面影響。</p><p>以上是資訊整理，不是買賣建議。</p></div>
+    <div class="card-title">🤖 今日AI分析</div>
+    <div class="ai-analysis"><p>今天市場在說什麼是，科技和半導體板塊領漲，尤其是QQQ科技ETF和費城半導體指數的漲幅，透露出投資者對AI和半導體產業的信心。這些ETF的表現也顯示出市場對科技股的偏好。同時，VT全球ETF的上漲也意味著整體市場氣氛良好。</p><p>總體環境來看，美國的公債殖利率和聯邦基金利率仍然處於相對穩定的狀態，殖利率曲線正常，對長期ETF投資者來說，這意味著市場預期經濟仍將保持穩定增長，且通脹壓力不大。這種環境下，投資者可以繼續關注長期投資機會，尤其是在科技和半導體領域。</p><p>本週需要注意的是，記憶體晶片短缺的問題可能會持續影響半導體產業，同時，Nvidia財報的公布和台積電的發展也值得關注。對於持有VT、QQQ等ETF的投資者來說，科技和半導體板塊的表現將是重點關注的對象，尤其是台積電和Nvidia等領軍企業的動態。以上是資訊整理，不是買賣建議。</p></div>
   </div>
 
-  <!-- 產業新聞 -->
   <div class="card full" id="news">
-    <div class="card-title">產業新聞（AI/半導體/被動元件）</div>
-    <div class="news-item"><span class="news-source">Yahoo科技</span><a href="https://finance.yahoo.com/news/where-microsoft-1-174300167.html" target="_blank" class="news-title">Where Will Microsoft Be in 1 Year?</a></div><div class="news-item"><span class="news-source">Yahoo科技</span><a href="https://finance.yahoo.com/news/americans-turned-to-new-credit-cards-and-personal-loans-last-year-as-higher-prices-burned-164357533.html" target="_blank" class="news-title">Americans turned to new credit cards and personal loans last year as higher prices burned</a></div><div class="news-item"><span class="news-source">Yahoo科技</span><a href="https://finance.yahoo.com/news/low-cost-index-funds-beginner-180616867.html" target="_blank" class="news-title">Low-cost index funds: A beginner’s guide</a></div><div class="news-item"><span class="news-source">Yahoo科技</span><a href="https://finance.yahoo.com/news/jpmorgan-concedes-closed-trumps-accounts-205827389.html" target="_blank" class="news-title">JPMorgan concedes it closed Trump's accounts after Jan. 6 attack</a></div><div class="news-item"><span class="news-source">Google財經-半導體</span><a href="https://news.google.com/rss/articles/CBMikgFBVV95cUxPVHFGTjA0enVNQm8xelMzY0xmaklnS2NTYUtaZ1RDb3I4VDNpTGN4NjFRaWxVcEtub1ZQLVZIblVfeDRfeXpSMUxjeTU2Z0VVWDZnSm9xLTVvaGd5ZDVTVXBNTVhtZDBNMFFnNkp2Um5fVDRad0s4cFJ0aTFiUVdxWTdmcU13Y0s5NElpZGE5dmlMQQ?oc=5" target="_blank" class="news-title">AI server MLCC orders double capacity; Murata considers price increase - digitimes</a></div><div class="news-item"><span class="news-source">Google財經-半導體</span><a href="https://news.google.com/rss/articles/CBMiiAFBVV95cUxQYXRESnVsVTZXRDNUVjZoRWp3YTlrR0pLdUJQMDdkUDBGZzltMElTNUlVRVRyMS1vTDc3endZNzE3ZHhvM3ZHRG5tV1U4VS1DRTB6UTlqSEx2ZXcxajFqbXdhNlNIemx5YXlqdFZxaF90bFBtaFZKczRQSEhfdEFWWjFPREtoRjhj?oc=5" target="_blank" class="news-title">Samsung Electro-Mechanics Achieves Record Sales on AI-Driven Demand - 조선일보</a></div><div class="news-item"><span class="news-source">Google財經-半導體</span><a href="https://news.google.com/rss/articles/CBMidEFVX3lxTE5NdE5La0xJRmFuc0pNckM0MnpfbzFreVRYaDU2OWlQa0s1RzFPREx6Z2Z3VWt2Q1l2TzRlSWp2QnV4LUlkSGFVcm1rczdZWlhXU21LYTBOZFo5LWkwYmo1OWFiZWRqT29kMWdObXBUdUdlTTY1?oc=5" target="_blank" class="news-title">Samsung Electro-Mechanics to Boost MLCC Output Amid AI Semiconductor Boom - Businesskorea</a></div><div class="news-item"><span class="news-source">Google財經-半導體</span><a href="https://news.google.com/rss/articles/CBMiU0FVX3lxTE0zcGtiYXJ6WVlhS21jVThrTGdwdlJ0aTkzdVc0eGg1VGdlUUxWSUtGTHFKZ3NBNGJybXNXYVlMalNKR0FXcmNrbGo5OTUtNWlqc3pB?oc=5" target="_blank" class="news-title">Samsung Electro-Mechanics Plant 'Full Operation' Due to Pouring MLCC Orders - 매일경제</a></div><div class="news-item"><span class="news-source">Google財經-台股</span><a href="https://news.google.com/rss/articles/CBMimAFBVV95cUxOWkZJZXpqZ1EwdS1HNTVzUXMzVlBnWlU4TEZnNDRqMnk2c2NWT1pfNDhWSThuemQ3cTN3SGZzU1EzUUhEa2w1ZDhBZmRPZndMUGo4LUp0dzd1TFZrXzlnRW43LUd4d19NekxPNnNSOWVyMlhJVnZtR25Rb2VlWUV6SlFzeXl0bDBUczg1MngycFVucjcyZUV6YQ?oc=5" target="_blank" class="news-title">Yageo adopts co-COO structure to support global expansion - digitimes</a></div><div class="news-item"><span class="news-source">Google財經-台股</span><a href="https://news.google.com/rss/articles/CBMidkFVX3lxTE9OYklwNkZwMERXX1R5eHJhUG5qRjdxQlRZVko0cjB5VWV2Z1BQNHNEY3pVNGhPM01fYXJEMjd3WGRyTHdaeEVBRWJNVW4yYW5CRlNib3RyaHBjY2lmMzVMQV84VE9zWVktYnY1QUc5TXlYSnd4THc?oc=5" target="_blank" class="news-title">Yageo to discuss Shibaura Electronics partnerships - Taipei Times</a></div><div class="news-item"><span class="news-source">Google財經-台股</span><a href="https://news.google.com/rss/articles/CBMivgFBVV95cUxQaGxHX3NyRjZZMWRZYWNZdWl3VS1CdVpmTFpyemM3Q2JXQlB1aHBkYWpPSlQzcXBXUEppM2lkdUNkc2dMNER4YWY0N0JFdFJpLUpzWHY0bk5SU1I0anFKTXlDMVFQUTNoem5EbGZVbWFCSnF6dlU0NzBrVlpjeGkzU0s3Z0dhUnBmV0dISGpUZ3VjaWRyNXVEbVRSd2NJN2RzRWJLSjlmT1BHRngyeW1WQXRwcHZ3OS1GbE42dHVR?oc=5" target="_blank" class="news-title">Yageo's Shibaura bid at finish line as Taiwan tech companies target Japan - Nikkei Asia</a></div><div class="news-item"><span class="news-source">Google財經-台股</span><a href="https://news.google.com/rss/articles/CBMiVEFVX3lxTE9BR0dqSC1CUVFjdUtBeER1ZDJoU0NZNWZYNk5VTlN2R05jWnRnZWlnSVhyOEZ2dWNUWlZ1cjlDd3ptTEl3S21rUTBHRkY0SE51YmRmVg?oc=5" target="_blank" class="news-title">Taiwan stock market passes 31,000 mark after TSMC briefing and US trade deal - Taiwan News</a></div>
+    <div class="card-title">產業新聞（AI / 半導體 / 總體經濟）</div>
+    <div class="news-item">
+          <span class="news-source">AI</span>
+          <div><a href="https://news.google.com/rss/articles/CBMimAFBVV95cUxNUUNNSi1rUWNIVUstMHpRaWRpdTBJUF9MR3ZQbm4yODR2YWZYcXYzdS1FMEVST0R1bi1CbE9YdUJqODJ2cXJ4X0EzZHVBQWNCNjU3aTRPZEh3S1hNNnNiMDdWVGQ5MWIyMmg0TEdZa1pGeWNON3RLQVFjc0c3am9TdDNVd1NFWXhZYVg2WmcwNmRpS0FBRlpEdQ?oc=5" target="_blank" class="news-title">現在有150美元的話，絕對要買的1個人工智慧（AI）晶片股票 - The Motley Fool</a><span class="news-en">1 No-Brainer Artificial Intelligence (AI) Chip Stock to Buy Now With $150 - The Motley Fool</span></div>
+        </div><div class="news-item">
+          <span class="news-source">AI</span>
+          <div><a href="https://news.google.com/rss/articles/CBMiogFBVV95cUxNQjFwN0VvTktNOFZBd1lwYkNUdTRrQ1VWbXFjSHNPLV94bEt1QXRxcFd4MjB0NUpwTExRWWF5VUxwV1pSNHZwMmRfLW5JV3FOSGFlZ0ozdXJOaFNjMWtVMkF6SHN1NVFPLU5tSVpvUGc4Ynp2NXZraDZMNmd1WkplUGpMUUQxclpsdGlNblZmYkQ5bFJZQWgzODVkNmlNa1lETGc?oc=5" target="_blank" class="news-title">一家日本馬桶製造商可能是人工智慧的下一個大事件 - The National Interest</a><span class="news-en">A Japanese Toilet Maker Could Be the Next Big Thing in AI - The National Interest</span></div>
+        </div><div class="news-item">
+          <span class="news-source">AI</span>
+          <div><a href="https://news.google.com/rss/articles/CBMidkFVX3lxTE53U3RpcjhzWGp5NWpDbk1NOTg2YTFDZUpNZXdLYTM4bXFMUTVXampqVDJkT2ZxVVgzMVo5MnVFR0JCa0JMc2hXT0ZIbmFnaGkyblBvMW5pZjdrQmU1NUJHTTBwMkRjTWwzTHRyYlVlSEJGNTJOR1E?oc=5" target="_blank" class="news-title">中芯國際表示，人工智慧晶片產能可能會被浪費 - 臺北時報</a><span class="news-en">SMIC says rushed AI chip capacity could end up idle - Taipei Times</span></div>
+        </div><div class="news-item">
+          <span class="news-source">AI</span>
+          <div><a href="https://news.google.com/rss/articles/CBMitAFBVV95cUxOQ0NobEhEc0xlcmJENEtxLXVMVHgtbEFkczRVTjEtUWxhWUl5MV9fRFEta094cVBDdGRxMzZKOVhfRzh3ektrY3lWcGV0SlVpbHlDSzM4YXJGT3ROdFVMRmF6UTd3WmFtYjJYMG1vUWlrQ3RkNXhlMHFnUHFRb2NOU08weGtyeE5Ha19SN0t0a1NRX3lCSW10OUhRRGJBZ2ZfYzhuQnJDWElqdFZmcEkyakhJcHc?oc=5" target="_blank" class="news-title">中國推動人工智慧自主：從晶片到大型語言模型 - 德國墨卡托中國研究院（MERICS）</a><span class="news-en">China’s drive toward self-reliance in artificial intelligence: from chips to large language models - Mercator Institute for China Studies (MERICS)</span></div>
+        </div><div class="news-item">
+          <span class="news-source">AI</span>
+          <div><a href="https://news.google.com/rss/articles/CBMikwFBVV95cUxPbGkwY05od2M5b0NXSG1HU2ItUzVpR0VDenI4OHlEeHpkWHRCNjcxdnl1cjh0aGROWmdpVmd4SUUzVVlyTk1hanZtZVZhNlNQQmYxRGwzQl9xM2hQSTAzbXBRLWNURmw4Umg1QUtoZU5MMTlhZ2tLTXpaN0JZX2VXbk9XRVpxZG1fdFJFUlFNZFVIekHSAZgBQVVfeXFMTlNCdU91LVhndDFxNFRMMjMtWEhtbkFxT0twVkxpNTJ4R3pIOGJGakoyY2cyR1VDQml2QjVMamNEanJOMGg0eG9CakNLbWFlTzQtcWwySmlFVEZqSWhpRFV1aGk1NnNpMlhhenJSTzVHaGtfcEJnRk95TkJQWUthRE5rR1RUeHRBN3dTMjVGVkgtNno4bnh5T3c?oc=5" target="_blank" class="news-title">記憶體晶片短缺將持續到2027年，半導體老闆表示 - CNBC</a><span class="news-en">Memory chip shortage to last through 2027, semiconductor boss says - CNBC</span></div>
+        </div><div class="news-item">
+          <span class="news-source">半導體</span>
+          <div><a href="https://news.google.com/rss/articles/CBMilwFBVV95cUxQbHNaaHhhRDd0YWVNeXpQVVpiaENoRVVNd1hJLW5RS0wwa2I5YzNuT1EwUmxOMF80dGd3M0NUcnhsVDVCNHROVWU3QlVIUENQSFRhbk43cGpPbUpud0M2MkRPZDl6NWJlNmZ6djVYb0JZcHZWZzBBZTRNbjFLdmtlSW1TcnNKeU5yb252ckRwd3JJOEw0U1NF?oc=5" target="_blank" class="news-title">台積電股價（2330.TW）重新受到關注，因為台灣重新開放；Nvidia財報即將公布 - TechStock²</a><span class="news-en">TSMC stock 2330.TW back in focus as Taiwan reopens; Nvidia earnings loom - TechStock²</span></div>
+        </div><div class="news-item">
+          <span class="news-source">半導體</span>
+          <div><a href="https://news.google.com/rss/articles/CBMilgFBVV95cUxPREZPaXJnWl80dC0xb21CbGNmdWpmOWhnSFpReTh0LXR3VU1lczBZVk9DTThQMTJURTR2Y2RjcmNuOG54LUtKTTlDVkdST3gwZTFybno5TnUzRWpqb2c3UXpIaU5NTlRLZVJrR3NhSGNtZi1MekJHM0pnSHdERGpYRVdRekx0MmdnT2dwS0NCRHBDV3BESHfSAZsBQVVfeXFMUGxOajdtVEdxN0pObFZnWkFvczFxUjBKZ1QyeGpuMGoyLTN2dTFGdmc2UUhhY2ZGbERtcEcxYWdRRVNudDZwOHBIZ1hMdzR1cG9VSlVCTl9Pd1Z1bTNlVjAtaXRxczNCYXZNdlh1VzdzNjZvbndJa2FhUUpwdGpVT19fbllxemRKVzM3anRxWTdlVXNlT0E3SzFEZFU?oc=5" target="_blank" class="news-title">Nvidia有望取代蘋果成為台積電的最大客戶，表明晶片產業的「動態變化」 - CNBC</a><span class="news-en">Nvidia set to supplant Apple as TSMC's top customer, signaling chip industry's 'changing dynamic' - CNBC</span></div>
+        </div><div class="news-item">
+          <span class="news-source">半導體</span>
+          <div><a href="https://news.google.com/rss/articles/CBMilwFBVV95cUxPQ1JOTEFyc3pjbHNNaHVjMVU3VWZpRTdUOHBHR3JTTkhYTDFFc05FMnplRU1IWUlJZm5Mb2pMVTVvcXkySngwLXZoWDBVR0c2TW1QM3doUm9hY1JfaTBJakRUNDBkZ3dHcDNJR1o2dXhDYnQzZDFuYkVjY0hLUk9IUjVwUzc5RVd4MTRUMGRZQkpZcUgxQ09r?oc=5" target="_blank" class="news-title">台灣積體電路製造公司剛剛向Nvidia和Broadcom投資者傳達了極好的消息 - The Motley Fool</a><span class="news-en">Taiwan Semiconductor Manufacturing Just Delivered Fantastic News to Nvidia and Broadcom Investors - The Motley Fool</span></div>
+        </div><div class="news-item">
+          <span class="news-source">半導體</span>
+          <div><a href="https://news.google.com/rss/articles/CBMikANBVV95cUxPeWNUM3Y1RmJMdnhGUG42MlpHV2VEWU9mY1ZVYlV0UFRyQ3lMMkpnVmVHOHZkVFc2bTRWcDBZaHpPbmRScGNvOGticGFkcS1iRjhWRE5LQzhUNU0zT1ltMUNVaTJzQUg3eHI4QmFRUm1YSHEwN0tXZkg0Vm9DZGFJQUNkV3dNOGUtTzFPMXNxdEQyaHhZUi1NT0dqVGhBMWZRWXBoVFh2ZTQ3OHJ4SUZ2cDJUVWhySHV1YV9KZDl2dEwxd2FWbURBR2FTUGtyRWUzdnNNLUZuZ3BjTHByV0J1X0h6OFVqMWJoWFpIcVVYZEIzOXFXekZxMlJMZjM5Yk5QTjVkMEFWWkloZ1N0c095TzVUOTM3bW5LRDk2eURReS04MHdyMVpkX3VrbVA3TFFUM1pmU1gzY3BIZzRYQWhVTHpJd3JaOVhvak94SjY1WXhuSnd4OFRNUmlJSXBUakhUV2p6Vkc3NldYSTlUU09sNXd2YzhGMnFkNjhtc3ZSWmlzVzBPTTVwQ1I2bVk0ZE9p?oc=5" target="_blank" class="news-title">為什麼Nvidia的股票會受到台積電的提振 - Barron's</a><span class="news-en">Why Nvidia Stock Is Getting a TSMC Boost - Barron's</span></div>
+        </div><div class="news-item">
+          <span class="news-source">半導體</span>
+          <div><a href="https://news.google.com/rss/articles/CBMiyAFBVV95cUxNWEJZR05ZYmdPQS00dUtwcm56WldfN2xiVXhtUVFxZGdPbjFOOXRQamNxTnZGaHJkVjlXT2xCdWxyeFlCSUtpM3lHeDNNNnlVV1RzMHZIM09GX2p0T0FQVFp6a3luaDdoNUtXNW5YNlBVQTdUQmdkcmFnY242dzdkMW9wTl8xdUxvbEhXbktFZnZNUXk5NlNlSnZwZy1hNC1fdWRqZ05qejVzWExEanBGaVdyaEFmQVhaaWhBTkZ3MHlFMlV6b2t3Rw?oc=5" target="_blank" class="news-title">台灣積體電路（TSM）週四公布財報：Nvidia/蘋果的需求、先進封裝、展望 - tastylive</a><span class="news-en">Taiwan Semiconductor (TSM) Earnings Thursday: Nvidia/Apple Demand, Advanced Packaging, Outlook - tastylive</span></div>
+        </div><div class="news-item">
+          <span class="news-source">總經</span>
+          <div><a href="https://news.google.com/rss/articles/CBMickFVX3lxTE5RLWtsZk04X2hveGxEQjFHOUNCcnlLcGZxOTVLWkFEODZjTTJ0T0ktUXFlWUFHQ2FXZ1BMZ24zQUFHMWFkLVZIR19YbkdnOTNVdnNITWZ2TnBOcHd6SUIxRFhCbTItV3gzLUM4Q2QyRDFQUdIBd0FVX3lxTE9kanoxU0ItWlNOXzFTMms4d1Ixd3o5bVpZOU1WeUJjdFZ0Q1BFTE15c0hpdXZtUzExaFloc3VpMDNfWjY1V1BMenFDeVZybVVhemdTN3FBRENuNGpmN0FNN2lvYk9sRXhrdDVOQk00V1dPU2lQVjlJ?oc=5" target="_blank" class="news-title">美國第四季度GDP僅增長1.4%，遠低於預估；通貨膨脹率達3% - CNBC</a><span class="news-en">Fourth-quarter U.S. GDP up just 1.4%, badly missing estimate; inflation firms at 3% - CNBC</span></div>
+        </div><div class="news-item">
+          <span class="news-source">總經</span>
+          <div><a href="https://news.google.com/rss/articles/CBMiywFBVV95cUxQY1JRWmhvano0MW5COVhCUk0yMmtWOGM1eTY1UkZrVVUxVGNIeUtiR21lTUYzWTRzb3BVOFdkc1JBUkd2ZXhfdTctTU1jWDJUX3BmY2RucUQ3Ung1Y1FSQ3RRRmRoT3dSNER4UUg2RjBmQVdWS050MEN6a2c2RE5zdE5zLWVVbFVHNGxXR2xGSFB5dWR3MmFrLWdQU2sxRk9Zc0N1WFJobnNNR2d5TzVFaHdvamVpeDQ2Rk0zeE53d1dkTUN2MDZhME1JTQ?oc=5" target="_blank" class="news-title">特朗普的貿易戰可能會破壞他希望大幅降低美國利率的期望 - The Guardian</a><span class="news-en">Trump’s trade war risks undermining his hopes of hefty US interest rate cuts | Graeme Wearden - The Guardian</span></div>
+        </div><div class="news-item">
+          <span class="news-source">總經</span>
+          <div><a href="https://news.google.com/rss/articles/CBMivwNBVV95cUxQSnhLbzZHUDBWMzZvVW5lNGtWVDBkNFA1SWs3aGdzSnVURlRPNTdaOUxyR0Vab3NFNUN6VkJvZ3JLM056dmo1d1lneHpaNlhXWVdrUDlZajlYTkhKcGhYMUVuQjdFNlRWT2JyTjY2Vk95UnVBRXhQTVI1bmoxcVNtNXFTZUVPZkRTMHF1LTh1bUpfY1JWMTlTZmJGMFdCLVlpRVhITmU5ZjVObE9UOVRDc194UW9SYmRNMDFlRHRfQnNZQUMwQ2xwTjFfVW5DdTRtaXRmZGc4ckZVaFNtLWROc1hDWjdXclEySkVIdWY0eThmTkJ1V0hoVnRIYTEycDhDNVNCbV9hU2ZEamJULUwtdXdhTUY1bEUtenRGZExJWlU2MEQwQy0zb1A1NnZ2aW5wNXhFeDhtc3Y3T3l0eFM4ZG52amlXNGN0RkExZjJHT1E0LU5CdFlZWkVEdFJiUmdTUVUtekZGQXR6eWhvWWlkZmdOTDNqY2JDMHpabEo1b0dwemxHQWxySksxUGt4OE5xS3hZcEVzSVB6LUJkenhpMmV1TEJ6VkFzQnZhcUlkbzItZW9qSGNaa0VSVHVGY2M?oc=5" target="_blank" class="news-title">美聯儲最常用的衡量指標顯示，十二月份通貨膨脹趨勢加速 - The Wall Street Journal</a><span class="news-en">Fed’s Preferred Gauge Shows Accelerating December Inflation Trends - The Wall Street Journal</span></div>
+        </div><div class="news-item">
+          <span class="news-source">總經</span>
+          <div><a href="https://news.google.com/rss/articles/CBMi-gJBVV95cUxOVk1veElob2VidnpnSDNRUll5b24xSHptT0pibjJyVTc3Q1dyeFN4bnNfcWl6SWVPZHlYNE8wbjh4ODJkcEktRTBTS25qRndOUmFqU09XWFVUMzVYUDZUNm5CQ1E1Rzh4ZnRfVWdmZmxwVFpZbTFsVkNndk5RS09TbW5nOWVuNm5RX0hwQXRiTEpHbjM0bG9EZHhxZGhhTGNBQnNXUk9IMFNYWUNUN1JVNDJ5d3o4MHVYeHpVal94dGdVQ1NpQVQ4b19SYVgxUktCdVRNTFpaZzFsb0p0UTFsem9GREZCR3ZZNU1HZnh6Q1VFc00yN0hGcWMxR1VVbEl5NnBuSGNVRV9hZWIxQ2R5a3ViSG5QLWI5U2xSLVdoa2FUOWNpLXc1dHdubHAzX2NEaW0yeEVMMHdESDVxTXlNT2UtVk9xdVFxaVN5UHNrNzdlS0NHVXF4T21BallKLWUzT1JzdXgtMDJoeFFQME4zWEVqX1lBWmtWMVE?oc=5" target="_blank" class="news-title">美聯儲的鷹派轉變對華生提出挑戰，對利率的影響是什麼 - Barron's</a><span class="news-en">The Fed’s Hawkish Turn Poses Problems for Warsh. What It Means for Rates. - Barron's</span></div>
+        </div>
   </div>
 
-  <!-- SEC申報 -->
-  <div class="card" id="sec">
-    <div class="card-title">SEC重大申報（近3日）</div>
-    <div class="sec-item"><span class="sec-tag">8-K</span><span class="sec-company">NVIDIA</span><a href="https://www.sec.gov/cgi-bin/browse-edgar?action=getcompany&CIK=NVDA&type=8-K&dateb=&owner=include&count=5" target="_blank" class="sec-title">['NVIDIA CORP  (NVDA)  (CIK 0001045810)']</a><span class="sec-date">2020-11-18</span></div><div class="sec-item"><span class="sec-tag">8-K</span><span class="sec-company">NVIDIA</span><a href="https://www.sec.gov/cgi-bin/browse-edgar?action=getcompany&CIK=NVDA&type=8-K&dateb=&owner=include&count=5" target="_blank" class="sec-title">['NVIDIA CORP  (NVDA)  (CIK 0001045810)']</a><span class="sec-date">2023-05-24</span></div><div class="sec-item"><span class="sec-tag">8-K</span><span class="sec-company">美光科技</span><a href="https://www.sec.gov/cgi-bin/browse-edgar?action=getcompany&CIK=MU&type=8-K&dateb=&owner=include&count=5" target="_blank" class="sec-title">['LEPOTA INC  (CIK 0001617351)']</a><span class="sec-date">2020-08-12</span></div><div class="sec-item"><span class="sec-tag">8-K</span><span class="sec-company">美光科技</span><a href="https://www.sec.gov/cgi-bin/browse-edgar?action=getcompany&CIK=MU&type=8-K&dateb=&owner=include&count=5" target="_blank" class="sec-title">['Yasheng Group  (CIK 0001123312)']</a><span class="sec-date">2016-01-05</span></div><div class="sec-item"><span class="sec-tag">8-K</span><span class="sec-company">應用材料</span><a href="https://www.sec.gov/cgi-bin/browse-edgar?action=getcompany&CIK=AMAT&type=8-K&dateb=&owner=include&count=5" target="_blank" class="sec-title">['ON SEMICONDUCTOR CORP  (ON)  (CIK 0001097864)']</a><span class="sec-date">2006-11-13</span></div><div class="sec-item"><span class="sec-tag">8-K</span><span class="sec-company">應用材料</span><a href="https://www.sec.gov/cgi-bin/browse-edgar?action=getcompany&CIK=AMAT&type=8-K&dateb=&owner=include&count=5" target="_blank" class="sec-title">['Northstar Neuroscience, Inc.  (CIK 0001351509)']</a><span class="sec-date">2008-02-22</span></div>
-  </div>
-
-  <!-- 分析師資源 -->
-  <div class="card" id="analysts">
-    <div class="card-title">每週必看：免費巨人肩膀</div>
-    
-        <div class="analyst-card">
-          <div class="analyst-top">
-            <span class="analyst-name">Dylan Patel @SemiAnalysis</span>
-            <span class="analyst-platform">X / Substack</span>
+  <div class="card full" id="giants">
+    <div class="card-title">今日來源重點摘要（AI自動整理）</div>
+    <div class="giant-card">
+          <div class="giant-header">
+            <div>
+              <span class="giant-name">SemiAnalysis</span>
+              <span class="giant-focus">AI晶片成本結構、供應鏈深度分析</span>
+            </div>
+            <a href="https://semianalysis.com" target="_blank" class="giant-link">前往原站 →</a>
           </div>
-          <div class="analyst-focus">半導體供應鏈深度分析，AI晶片成本結構</div>
-          <div class="analyst-why">→ 最接近機構水準的免費半導體研究，每篇都值得讀</div>
-          <a href="https://semianalysis.com" target="_blank" class="analyst-link">https://semianalysis.com</a>
-        </div>
-        <div class="analyst-card">
-          <div class="analyst-top">
-            <span class="analyst-name">Chip Stock Investor @ChipStockInvest</span>
-            <span class="analyst-platform">X</span>
-          </div>
-          <div class="analyst-focus">半導體個股、被動元件、供應鏈追蹤</div>
-          <div class="analyst-why">→ 台灣半導體供應鏈相關資訊整理最即時</div>
-          <a href="https://x.com/ChipStockInvest" target="_blank" class="analyst-link">https://x.com/ChipStockInvest</a>
-        </div>
-        <div class="analyst-card">
-          <div class="analyst-top">
-            <span class="analyst-name">TrendForce 最新報告</span>
-            <span class="analyst-platform">Web RSS</span>
-          </div>
-          <div class="analyst-focus">DRAM/NAND/Server/MLCC市場報告摘要</div>
-          <div class="analyst-why">→ 每篇摘要免費，點進去看標題+導言已經夠用</div>
-          <a href="https://www.trendforce.com/news/" target="_blank" class="analyst-link">https://www.trendforce.com/news/</a>
-        </div>
-        <div class="analyst-card">
-          <div class="analyst-top">
-            <span class="analyst-name">SEMI B/B Ratio 月報</span>
-            <span class="analyst-platform">semi.org</span>
-          </div>
-          <div class="analyst-focus">北美半導體設備出貨/訂單比值，景氣領先指標</div>
-          <div class="analyst-why">→ B/B > 1 = 景氣向上，< 1 = 下行，每月必看</div>
-          <a href="https://www.semi.org/en/products-services/market-data/book-to-bill" target="_blank" class="analyst-link">https://www.semi.org/en/products-services/market-data/book-to-bill</a>
-        </div>
-        <div class="analyst-card">
-          <div class="analyst-top">
-            <span class="analyst-name">Murata IR 季報</span>
-            <span class="analyst-platform">官方IR頁面</span>
-          </div>
-          <div class="analyst-focus">MLCC全球最大廠商，法說會展望是被動元件最權威訊號</div>
-          <div class="analyst-why">→ Murata怎麼說，MLCC市場就怎麼走</div>
-          <a href="https://corporate.murata.com/en-us/ir/library/presentation" target="_blank" class="analyst-link">https://corporate.murata.com/en-us/ir/library/presentation</a>
-        </div>
-        <div class="analyst-card">
-          <div class="analyst-top">
-            <span class="analyst-name">EarningsCall.biz</span>
-            <span class="analyst-platform">Web / RSS</span>
-          </div>
-          <div class="analyst-focus">NVIDIA、台積電、美光等法說會完整逐字稿</div>
-          <div class="analyst-why">→ 免費法說會逐字稿，貼給Claude分析比看摘要深入10倍</div>
-          <a href="https://earningscall.biz" target="_blank" class="analyst-link">https://earningscall.biz</a>
+          <div class="giant-summary">今日有多家公司推出新發展，包括xAI的Colossus 2，Nvidia的Rubin CPX，加速器和Rack解決方案，以及Huawei的Ascend生產擴增。另外，Amazon的AWS和Anthropic也在擴增Trainium，目標達到多吉瓦的水平。這些發展反映了AI和計算能力的重要性，各公司都在爭奪這一領域的主導地位。</div>
         </div>
   </div>
 
 </div>
 
 <div class="footer">
-  <div class="update-badge">● 每個交易日早上 09:00 自動更新</div><br><br>
-  資訊整理僅供參考 · 不構成投資建議 · 投資一定有風險<br>
-  數據來源：yfinance · FRED · SEC EDGAR · RSS · Groq Llama 3.3
+  <div class="badge">● 每個交易日早上 09:00 自動更新</div><br><br>
+  資訊整理僅供參考 · 不構成投資建議<br>
+  數據來源：yfinance · FRED · Google News RSS · TrendForce · SemiAnalysis · Groq Llama 3.3
 </div>
 
 </body>
