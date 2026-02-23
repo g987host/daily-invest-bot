@@ -5,7 +5,11 @@ on:
     # 每月1日早上9點（台灣時間）提醒執行
     - cron: '0 0 1 * *'
   workflow_dispatch:
-    # 手動觸發：想執行就去Actions點「Run workflow」
+    inputs:
+      cape_value:
+        description: 'Shiller CAPE 當前數值（查 multpl.com/shiller-pe）'
+        required: false
+        default: ''
 
 jobs:
   monthly-check:
