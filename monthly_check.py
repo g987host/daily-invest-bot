@@ -44,20 +44,16 @@ def fred_get(series_id, limit=2):
 
 
 def get_cape():
-    """從多個來源抓取Shiller CAPE"""
-    """優先用手動輸入，否則嘗試抓網頁"""
-    # 優先：手動輸入（從環境變數）
+    """優先手動輸入，否則嘗試自動抓"""
+    import re
     manual = os.environ.get('CAPE_MANUAL', '').strip()
     if manual:
         try:
             val = float(manual)
-            print(f"  ✓ CAPE (手動輸入): {val}")
+            print(f"  ✓ CAPE (手動): {val}")
             return val
         except:
             pass
-
-    # 備用：抓網頁
-    import re
     try:
         r = requests.get(
             'https://www.multpl.com/shiller-pe',
@@ -71,9 +67,8 @@ def get_cape():
                 print(f"  ✓ CAPE (自動): {val}")
                 return val
     except Exception as e:
-        print(f"  CAPE 自動抓取失敗: {e}")
-
-    print("  ⚠ CAPE: 請手動輸入（multpl.com/shiller-pe）")
+        print(f"  CAPE 自動失敗: {e}")
+    print("  ⚠ CAPE: 請手動輸入")
     return None
 
 
@@ -144,60 +139,59 @@ def fetch_all_indicators():
         print("  ✗ 薩姆法則: 無法取得")
 
     # ── 4. ISM PMI ───────────────────────────────
-    # 嘗試多個FRED系列代碼
-    pmi = None
-    for series in ['NAPM']:
-        pmi = fred_get(series, 3)
-        if pmi and len(pmi) >= 2:
-            print(f"  ✓ PMI found with series: {series}")
-            break
+    # 優先手動輸入（FRED有延遲，手動最準確）
+    pmi_manual = os.environ.get('PMI_MANUAL', '').strip()
+    pmi_val = None
 
-    # 如果FRED都失敗，直接從ISM網站抓
-    if not pmi:
+    if pmi_manual:
         try:
-            r = requests.get(
-                'https://api.stlouisfed.org/fred/series/observations',
-                params={
-                    'series_id': 'NAPM',
-                    'api_key': FRED_API_KEY,
-                    'file_type': 'json',
-                    'limit': 3,
-                    'sort_order': 'desc',
-                    'observation_start': '2024-01-01'
-                },
-                timeout=10
-            )
-            data = r.json()
-            print(f"  DEBUG PMI response: {str(data)[:200]}")
-            obs = [o['value'] for o in data.get('observations', []) if o['value'] != '.']
-            if obs:
-                pmi = obs
-        except Exception as e:
-            print(f"  PMI 備用抓取失敗: {e}")
+            pmi_val = float(pmi_manual)
+            print(f"  ✓ ISM PMI (手動): {pmi_val}")
+        except:
+            pass
 
-    if pmi and len(pmi) >= 2:
-        current = float(pmi[0])
-        prev    = float(pmi[1])
-        trend   = '上升' if current > prev else '下降'
-        status  = '擴張' if current > 50 else '收縮'
+    if pmi_val is None:
+        # 嘗試FRED（可能有1個月延遲）
+        pmi_data = fred_get('NAPM', 3)
+        if pmi_data:
+            try:
+                pmi_val = float(pmi_data[0])
+                print(f"  ✓ ISM PMI (FRED，可能有延遲): {pmi_val}")
+            except:
+                pass
+
+    if pmi_val is not None:
+        # 前期：優先手動輸入
+        prev_manual = os.environ.get('PMI_PREV', '').strip()
+        prev_val = None
+        if prev_manual:
+            try:
+                prev_val = float(prev_manual)
+            except:
+                pass
+        # 手動沒有就從FRED抓第二筆
+        if prev_val is None:
+            fred_data = fred_get('NAPM', 3)
+            if fred_data and len(fred_data) >= 2:
+                try:
+                    prev_val = float(fred_data[1])
+                except:
+                    pass
+        if prev_val is None:
+            prev_val = pmi_val  # 真的沒有就顯示持平
+
+        trend  = '上升' if pmi_val > prev_val else ('下降' if pmi_val < prev_val else '持平')
+        status = '擴張' if pmi_val > 50 else '收縮'
         results['pmi'] = {
-            'value': current,
-            'prev': prev,
+            'value': pmi_val,
+            'prev': prev_val,
             'trend': trend,
             'status': status
         }
-        print(f"  ✓ ISM PMI: {current} ({status}，{trend})")
+        print(f"  ✓ ISM PMI: {pmi_val} ({status}，{trend})")
     else:
-        # 最後備用：用硬編碼的最新已知值（手動更新）
-        # 2026年1月ISM製造業PMI = 50.9
-        results['pmi'] = {
-            'value': 50.9,
-            'prev': 49.3,
-            'trend': '上升',
-            'status': '擴張',
-            'note': '（備用數值，可能非最新）'
-        }
-        print("  ⚠ ISM PMI: 使用備用數值 50.9（FRED API無法取得）")
+        results['pmi'] = None
+        print("  ✗ ISM PMI: 請手動輸入")
 
     # ── 5. Shiller CAPE ──────────────────────────
     cape = get_cape()
@@ -375,7 +369,14 @@ def send_telegram(indicators, analysis):
         f"<b>🤖 AI分析與行動建議</b>\n\n"
         f"{analysis}\n\n"
         f"─────────────────\n"
-        f"<i>以上是資訊整理，不是投資建議。</i>"
+        f"<i>以上是資訊整理，不是投資建議。</i>\n\n"
+        f"─────────────────\n"
+        f"<b>📎 查詢來源連結</b>\n"
+        f"• <a href='https://www.cmegroup.com/markets/interest-rates/cme-fedwatch-tool.html'>Fed利率預期 · CME FedWatch</a>\n"
+        f"• <a href='https://fred.stlouisfed.org/graph/?g=A9Ed'>殖利率曲線 · FRED（10Y-2Y）</a>\n"
+        f"• <a href='https://fred.stlouisfed.org/series/SAHMREALTIME'>薩姆法則 · FRED</a>\n"
+        f"• <a href='https://www.ismworld.org/supply-management-news-and-reports/reports/ism-report-on-business/pmi/'>ISM PMI · 官方網站</a>\n"
+        f"• <a href='https://www.multpl.com/shiller-pe'>Shiller CAPE · multpl.com</a>"
     )
 
     # Telegram限制4096字，超過就分兩則
