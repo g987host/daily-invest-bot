@@ -28,6 +28,7 @@ def get_market_data():
         '英國股市': '^FTSE',
         'VT全球ETF': 'VT',
         'QQQ科技ETF': 'QQQ',
+        '半導體ETF': 'SOXX',
         'AI科技 (BOTZ)': 'BOTZ'
     }
     rows = []
