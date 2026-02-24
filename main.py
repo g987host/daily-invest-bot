@@ -481,7 +481,7 @@ tr:hover td{{background:rgba(245,158,11,.03);}}
 </div>
 
 <div class="footer">
-  <div class="badge">● 每個交易日早上 09:00 自動更新</div><br><br>
+  <div class="badge">● 每個交易日早上 07:00 自動更新</div><br><br>
   資訊整理僅供參考 · 不構成投資建議<br>
   數據來源：yfinance · FRED · Google News RSS · TrendForce · SemiAnalysis · Groq Llama 3.3
 </div>
