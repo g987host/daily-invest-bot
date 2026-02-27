@@ -26,6 +26,7 @@ def get_market_data():
         '德國股市': '^GDAXI',
         '法國股市': '^FCHI',
         '英國股市': '^FTSE',
+        '台積電ADR':'TSM',
         'VT全球ETF': 'VT',
         'QQQ科技ETF': 'QQQ',
         '半導體ETF': 'SOXX',
