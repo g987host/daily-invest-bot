@@ -34,5 +34,5 @@ jobs:
       - name: 發送 LINE 市場通知
         run: python line_market.py
         env:
-          LINE_NOTIFY_TOKEN: ${{ secrets.LINE_CHANNEL_TOKEN }}
+          LINE_CHANNEL_TOKEN: ${{ secrets.LINE_CHANNEL_TOKEN }}
           LINE_GROUP_ID: ${{ secrets.LINE_GROUP_ID }}
