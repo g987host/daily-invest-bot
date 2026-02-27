@@ -18,7 +18,7 @@ INDICES = [
     {'symbol': '^GSPC',  'name': '美股S&P500',    'flag': '🇺🇸'},
     {'symbol': '^IXIC',  'name': '那斯達克',      'flag': '🇺🇸'},
     {'symbol': '^SOX',   'name': '費城半導體',   'flag': '🇺🇸'},
-    {'symbol': '^TSM',   'name': '台積電ADR',   'flag': '🇺🇸'},
+    {'symbol': 'TSM',   'name': '台積電ADR',   'flag': '🇺🇸'},
     # 歐股
     {'symbol': '^GDAXI', 'name': '德國股市',         'flag': '🇩🇪'},
     {'symbol': '^FTSE',  'name': '英國股市',    'flag': '🇬🇧'},
@@ -115,7 +115,7 @@ def format_message(results):
             )
 
         sym = r['symbol']
-        if sym in ['^GSPC', '^IXIC', '^DJI','^SOX','^TSM']:
+        if sym in ['^GSPC', '^IXIC', '^DJI','^SOX','TSM']:
             us_lines.append(line)
         else:
             eu_lines.append(line)
