@@ -15,7 +15,7 @@ import pytz
 INDICES = [
     # 美股
     {'symbol': '^DJI',   'name': '道瓊工業',   'flag': '🇺🇸'},
-    {'symbol': '^GSPC',  'name': '美股S&P500',    'flag': '🇺🇸'},
+    {'symbol': '^GSPC',  'name': 'S&P500',    'flag': '🇺🇸'},
     {'symbol': '^IXIC',  'name': '那斯達克',      'flag': '🇺🇸'},
     {'symbol': '^SOX',   'name': '費城半導體',   'flag': '🇺🇸'},
     {'symbol': 'TSM',   'name': '台積電ADR',   'flag': '🇺🇸'},
