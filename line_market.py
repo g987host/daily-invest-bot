@@ -8,8 +8,6 @@ import requests
 from datetime import datetime, timedelta
 import pytz
 
-LINE_NOTIFY_TOKEN = os.environ['LINE_NOTIFY_TOKEN']
-
 # ══════════════════════════════════════════════
 # 1. 抓取指數數據（yfinance）
 # ══════════════════════════════════════════════
