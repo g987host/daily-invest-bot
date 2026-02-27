@@ -1,0 +1,38 @@
+name: LINE 每日市場指數
+
+on:
+  schedule:
+    # 台灣時間：
+    # 06:30 → 歐股開盤前（UTC 22:30，前一天）
+    # 07:00 → 美股收盤後（紐約前一天22:00收盤，台灣早上11:00，這裡改早上通知）
+    #
+    # 建議時間：
+    # 每天早上 07:00 台灣時間（UTC 23:00 前一天）→ 美股昨收 + 歐股昨收
+    - cron: '30 22 * * 2-6'   # 週一到週五 UTC 23:00 = 台灣 07:00
+
+    # 如果你想要美股盤後（台灣時間隔天凌晨5點）：
+    # - cron: '0 21 * * 1-5'  # UTC 21:00 = 台灣 05:00
+
+  workflow_dispatch:
+    # 隨時手動觸發測試
+
+jobs:
+  send-line:
+    runs-on: ubuntu-latest
+    steps:
+      - name: 取得程式碼
+        uses: actions/checkout@v4
+
+      - name: 設定 Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: 安裝套件
+        run: pip install yfinance pytz requests
+
+      - name: 發送 LINE 市場通知
+        run: python line_market.py
+        env:
+          LINE_NOTIFY_TOKEN: ${{ secrets.LINE_CHANNEL_TOKEN }}
+          LINE_GROUP_ID: ${{ secrets.LINE_GROUP_ID }}
