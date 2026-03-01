@@ -3,7 +3,7 @@ name: Monthly Investment Check
 on:
   schedule:
     # 每月1日早上9點（台灣時間）提醒執行
-    - cron: '0 22 3 * *'
+    - cron: '30 22 3 * *'
   workflow_dispatch:
     inputs:
       cape_value:
