@@ -367,6 +367,9 @@ def generate_html(market_rows, macro_data, news_items, giant_summaries, analysis
 <html lang="zh-TW">
 <head>
 <meta charset="UTF-8">
+<META HTTP-EQUIV="PRAGMA" CONTENT="NO-CACHE">
+<META HTTP-EQUIV="EXPIRES" CONTENT="0">
+<META HTTP-EQUIV="CACHE-CONTROL" CONTENT="NO-CACHE">
 <meta name="viewport" content="width=device-width,initial-scale=1.0">
 <meta http-equiv="refresh" content="3600">
 <title>投資情報日報 · {today}</title>
