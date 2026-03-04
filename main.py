@@ -283,15 +283,14 @@ def generate_analysis(market_rows, macro_data, news_items):
 【今日重要新聞】
 {news_text}
 
-請分四段回答，每段3-5句，不要廢話不要條列：
+請分三段回答，每段3-5句，不要廢話不要條列：
 
 第一段【今天市場在說什麼】：漲跌主因？AI和半導體ETF透露什麼訊號？
 
 第二段【總體環境怎樣】：利率和債券數據的含義？對長期ETF投資者意味著什麼？
 
-第三段【本週需要注意】：有沒有值得留意的趨勢或風險？對持有VT、QQQ、SOXX、台灣50的人有什麼影響？
-
-第四段【本週其他新聞】：找尋1周內(今天)最新相關重大新聞(美股VIX、戰爭、油價、通膨、FED、經濟、日圓)後，列出3-4個，本周最值得追蹤的指標或事件。
+第三段【本週其他新聞】：去'https://finance.yahoo.com/topic/latest-news/'
+找尋兩天內最新相關重大新聞(美股VIX、戰爭、油價、通膨、FED、經濟、日圓)後，列出3-4個，本周最值得追蹤的指標或事件。
 
 最後一行固定寫：「以上是資訊整理，不是買賣建議。」"""
 
@@ -302,7 +301,7 @@ def generate_analysis(market_rows, macro_data, news_items):
                 {'role': 'system', 'content': '你是有十年經驗的投資研究員，說話簡潔有重點，只說有數據支撐的事。'},
                 {'role': 'user',   'content': prompt}
             ],
-            max_tokens=600,
+            max_tokens=900,
             temperature=0.6
         )
         return resp.choices[0].message.content
