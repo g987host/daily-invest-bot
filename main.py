@@ -146,7 +146,7 @@ def get_twse_institutional():
                     continue
 
                 # 用關鍵字比對，兼容各種名稱格式
-                if ('外資' in name or 'Foreign' in name) and '自營' not in name and '合計' not in name:
+                if ('外資及陸資(不含外資自營商)' in name or 'Foreign' in name) and '合計' not in name:
                     parsed['外資'] = {'buy': buy, 'sell': sell, 'net': net, 'label': '外資及陸資'}
                 elif '投信' in name and '合計' not in name:
                     parsed['投信'] = {'buy': buy, 'sell': sell, 'net': net, 'label': '投信'}
