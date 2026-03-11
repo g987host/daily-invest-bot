@@ -131,44 +131,48 @@ def get_twse_institutional():
             date_str = data.get('date', target)
             rows = data['data']
 
-            # 解析各法人類別（欄位：名稱、買進、賣出、買賣差額）
+            # debug：印出所有欄位名稱，方便排查
+            print(f'  TWSE 欄位名稱: {[row[0].strip() for row in rows]}')
+
             parsed = {}
             for row in rows:
                 name = row[0].strip()
                 try:
-                    net = int(row[3].replace(',', '').replace('+', ''))
-                except:
-                    net = 0
-                try:
-                    buy = int(row[1].replace(',', ''))
+                    # 買進、賣出、差額（單位：元）
+                    buy  = int(row[1].replace(',', ''))
                     sell = int(row[2].replace(',', ''))
+                    net  = int(row[3].replace(',', '').replace('+', ''))
                 except:
-                    buy = sell = 0
+                    continue
 
-                if '外資及陸資' in name and '自營' not in name:
-                    parsed['外資'] = {'buy': buy, 'sell': sell, 'net': net}
-                elif '投信' in name:
-                    parsed['投信'] = {'buy': buy, 'sell': sell, 'net': net}
-                elif '自營商' in name and '自行' in name:
+                # 用關鍵字比對，兼容各種名稱格式
+                if ('外資' in name or 'Foreign' in name) and '自營' not in name and '合計' not in name:
+                    parsed['外資'] = {'buy': buy, 'sell': sell, 'net': net, 'label': '外資及陸資'}
+                elif '投信' in name and '合計' not in name:
+                    parsed['投信'] = {'buy': buy, 'sell': sell, 'net': net, 'label': '投信'}
+                elif '自營' in name and '自行' in name:
                     parsed['自營(自行)'] = {'buy': buy, 'sell': sell, 'net': net}
-                elif '自營商' in name and '避險' in name:
+                elif '自營' in name and '避險' in name:
                     parsed['自營(避險)'] = {'buy': buy, 'sell': sell, 'net': net}
-                elif '三大法人' in name or '合計' in name:
-                    parsed['三大合計'] = {'buy': buy, 'sell': sell, 'net': net}
+                elif '三大法人' in name or ('合計' in name and '自營' not in name and '外資' not in name):
+                    parsed['三大合計'] = {'buy': buy, 'sell': sell, 'net': net, 'label': '三大法人合計'}
 
             if parsed:
                 # 計算自營商合計（自行+避險）
                 try:
                     sb = parsed.get('自營(自行)', {})
                     sh = parsed.get('自營(避險)', {})
-                    parsed['自營合計'] = {
-                        'buy': sb.get('buy', 0) + sh.get('buy', 0),
-                        'sell': sb.get('sell', 0) + sh.get('sell', 0),
-                        'net': sb.get('net', 0) + sh.get('net', 0)
-                    }
+                    if sb or sh:
+                        parsed['自營合計'] = {
+                            'buy':   sb.get('buy', 0)  + sh.get('buy', 0),
+                            'sell':  sb.get('sell', 0) + sh.get('sell', 0),
+                            'net':   sb.get('net', 0)  + sh.get('net', 0),
+                            'label': '自營商'
+                        }
                 except:
                     pass
 
+                print(f'  解析結果: {list(parsed.keys())}')
                 results['date'] = date_str
                 results['data'] = parsed
                 print(f'✓ 三大法人資料日期：{date_str}')
@@ -183,11 +187,11 @@ def get_twse_institutional():
 
 
 def fmt_yi(val):
-    """將千元單位轉成億元，加上方向符號"""
-    yi = val / 100_000  # TWSE 單位是千元
+    """將元單位轉成億元，加上方向符號（TWSE API 單位為元）"""
+    yi = val / 100_000_000  # TWSE 單位是元，除以1億
     arrow = '▲' if yi > 0 else '▼' if yi < 0 else '─'
     color = '#22c55e' if yi > 0 else '#ef4444' if yi < 0 else '#888'
-    return arrow, f'{yi:+.1f}億', color
+    return arrow, f'{yi:+.2f}億', color
 
 
 # ═══════════════════════════════════════════════════════════
@@ -469,22 +473,30 @@ def generate_html(market_rows, macro_data, news_items, giant_summaries, analysis
     if institutional.get('data'):
         d = institutional['data']
         date_label = institutional.get('date', '前一交易日')
-        order = [('外資', '外資及陸資'), ('投信', '投信'), ('自營合計', '自營商合計'), ('三大合計', '三大法人合計')]
-        for key, label in order:
+        # 固定順序：外資、投信、自營、合計
+        order = [
+            ('外資',    '外資及陸資'),
+            ('投信',    '投信'),
+            ('自營合計','自營商'),
+            ('三大合計','三大法人合計'),
+        ]
+        for key, fallback_label in order:
             if key not in d:
                 continue
-            net = d[key]['net']
+            entry = d[key]
+            label = entry.get('label', fallback_label)
+            net   = entry['net']
             arrow, amt, color = fmt_yi(net)
-            buy_yi = d[key]['buy'] / 100_000
-            sell_yi = d[key]['sell'] / 100_000
-            # 特別標記三大合計
-            weight = '700' if key == '三大合計' else '400'
-            border = f'border-top:1px solid #2a3347;margin-top:8px;padding-top:8px;' if key == '三大合計' else ''
+            buy_yi  = entry['buy']  / 100_000_000
+            sell_yi = entry['sell'] / 100_000_000
+            is_total = key == '三大合計'
+            weight = '700' if is_total else '400'
+            border = 'border-top:1px solid #2a3347;margin-top:8px;padding-top:8px;' if is_total else ''
             inst_html += f'''<div class="macro-row" style="{border}">
               <span style="font-weight:{weight};">{label}</span>
               <span style="text-align:right;">
                 <span style="color:{color};font-weight:{weight};font-family:'IBM Plex Mono',monospace;">{arrow} {amt}</span>
-                <span class="muted" style="display:block;font-size:10px;">買{buy_yi:.1f}億 賣{sell_yi:.1f}億</span>
+                <span class="muted" style="display:block;font-size:10px;">買{buy_yi:.2f}億 賣{sell_yi:.2f}億</span>
               </span>
             </div>'''
         inst_date_html = f'<div class="muted" style="font-size:10px;margin-bottom:10px;">資料日期：{date_label}</div>'
@@ -653,17 +665,27 @@ def send_telegram(market_rows, github_user, repo_name, institutional):
     except:
         hi = ''
 
-    # 三大法人摘要
+    # 三大法人摘要（外資最重要，排第一）
     inst_lines = ''
     if institutional.get('data'):
         d = institutional['data']
         date_label = institutional.get('date', '')
         inst_lines = f'\n\n🏦 <b>三大法人 ({date_label})</b>\n'
-        for key, label in [('外資','外資'), ('投信','投信'), ('自營合計','自營'), ('三大合計','合計')]:
-            if key in d:
-                _, amt, _ = fmt_yi(d[key]['net'])
-                prefix = '└' if key == '三大合計' else '├'
-                inst_lines += f'{prefix} {label}：<b>{amt}</b>\n'
+        order = [
+            ('外資',    '外資'),
+            ('投信',    '投信'),
+            ('自營合計','自營'),
+            ('三大合計','合計'),
+        ]
+        last_key = '三大合計'
+        for key, label in order:
+            if key not in d:
+                continue
+            _, amt, _ = fmt_yi(d[key]['net'])
+            prefix = '└' if key == last_key else '├'
+            bold_start = '<b>' if key in ('外資', '三大合計') else ''
+            bold_end   = '</b>' if key in ('外資', '三大合計') else ''
+            inst_lines += f'{prefix} {label}：{bold_start}{amt}{bold_end}\n'
         inst_lines = inst_lines.rstrip()
 
     msg = (
