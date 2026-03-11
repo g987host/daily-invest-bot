@@ -28,11 +28,13 @@ def get_market_data():
         '英國股市': '^FTSE',
         '台積電ADR':'TSM',
         '國際油價':'CL=F',
+        'VIX':'^VIX',
         'VT全球ETF': 'VT',
         'QQQ科技ETF': 'QQQ',
         '半導體ETF': 'SOXX',
         'AI科技 (BOTZ)': 'BOTZ'
     }
+
     rows = []
     for name, sym in symbols.items():
         try:
@@ -103,7 +105,93 @@ def get_fred_data():
 
 
 # ═══════════════════════════════════════════════════════════
-# 3. 新聞抓取（AI / 半導體 / 總體經濟）
+# 3. 台股三大法人買賣超（TWSE 官方 API）
+# ═══════════════════════════════════════════════════════════
+def get_twse_institutional():
+    """
+    抓取台股三大法人整體買賣超資料（前一個交易日）
+    來源：台灣證券交易所 BFI82U API（免費，無需 API Key）
+    回傳 dict 包含：外資、投信、自營商、合計的買賣超金額（億元）
+    """
+    # 嘗試最近幾天，避開假日
+    results = {}
+    for days_back in range(1, 6):
+        target = (datetime.now() - timedelta(days=days_back)).strftime('%Y%m%d')
+        try:
+            r = requests.get(
+                'https://www.twse.com.tw/rwd/zh/fund/BFI82U',
+                params={'response': 'json', 'dayDate': target, 'type': 'day'},
+                headers={'User-Agent': 'Mozilla/5.0'},
+                timeout=10
+            )
+            data = r.json()
+            if data.get('stat') != 'OK' or not data.get('data'):
+                continue
+
+            date_str = data.get('date', target)
+            rows = data['data']
+
+            # 解析各法人類別（欄位：名稱、買進、賣出、買賣差額）
+            parsed = {}
+            for row in rows:
+                name = row[0].strip()
+                try:
+                    net = int(row[3].replace(',', '').replace('+', ''))
+                except:
+                    net = 0
+                try:
+                    buy = int(row[1].replace(',', ''))
+                    sell = int(row[2].replace(',', ''))
+                except:
+                    buy = sell = 0
+
+                if '外資及陸資' in name and '自營' not in name:
+                    parsed['外資'] = {'buy': buy, 'sell': sell, 'net': net}
+                elif '投信' in name:
+                    parsed['投信'] = {'buy': buy, 'sell': sell, 'net': net}
+                elif '自營商' in name and '自行' in name:
+                    parsed['自營(自行)'] = {'buy': buy, 'sell': sell, 'net': net}
+                elif '自營商' in name and '避險' in name:
+                    parsed['自營(避險)'] = {'buy': buy, 'sell': sell, 'net': net}
+                elif '三大法人' in name or '合計' in name:
+                    parsed['三大合計'] = {'buy': buy, 'sell': sell, 'net': net}
+
+            if parsed:
+                # 計算自營商合計（自行+避險）
+                try:
+                    sb = parsed.get('自營(自行)', {})
+                    sh = parsed.get('自營(避險)', {})
+                    parsed['自營合計'] = {
+                        'buy': sb.get('buy', 0) + sh.get('buy', 0),
+                        'sell': sb.get('sell', 0) + sh.get('sell', 0),
+                        'net': sb.get('net', 0) + sh.get('net', 0)
+                    }
+                except:
+                    pass
+
+                results['date'] = date_str
+                results['data'] = parsed
+                print(f'✓ 三大法人資料日期：{date_str}')
+                return results
+
+        except Exception as e:
+            print(f'三大法人 {target} 失敗: {e}')
+            continue
+
+    print('⚠ 三大法人：無法取得資料')
+    return {}
+
+
+def fmt_yi(val):
+    """將千元單位轉成億元，加上方向符號"""
+    yi = val / 100_000  # TWSE 單位是千元
+    arrow = '▲' if yi > 0 else '▼' if yi < 0 else '─'
+    color = '#22c55e' if yi > 0 else '#ef4444' if yi < 0 else '#888'
+    return arrow, f'{yi:+.1f}億', color
+
+
+# ═══════════════════════════════════════════════════════════
+# 4. 新聞抓取（AI / 半導體 / 總體經濟）
 # ═══════════════════════════════════════════════════════════
 def get_news():
     feeds = [
@@ -131,7 +219,7 @@ def get_news():
 
 
 # ═══════════════════════════════════════════════════════════
-# 4. 用Groq批次翻譯新聞標題
+# 5. 用Groq批次翻譯新聞標題
 # ═══════════════════════════════════════════════════════════
 def translate_news(news_items):
     if not news_items:
@@ -165,7 +253,7 @@ def translate_news(news_items):
 
 
 # ═══════════════════════════════════════════════════════════
-# 5. 自動抓取「巨人肩膀」重點內容
+# 6. 自動抓取「巨人肩膀」重點內容
 # ═══════════════════════════════════════════════════════════
 def get_giant_summaries():
     """
@@ -259,18 +347,29 @@ def get_giant_summaries():
 
 
 # ═══════════════════════════════════════════════════════════
-# 6. AI主分析
+# 7. AI主分析
 # ═══════════════════════════════════════════════════════════
-def generate_analysis(market_rows, macro_data, news_items):
+def generate_analysis(market_rows, macro_data, news_items, institutional):
     today = datetime.now().strftime('%Y/%m/%d')
 
     market_text = '\n'.join([f'{r["name"]}: {r["price"]} {r["pct"]}' for r in market_rows])
     macro_text  = '\n'.join([f'{m["label"]}: {m["val"]}' for m in macro_data]) if macro_data else '（未設定FRED API）'
-    # 用中文標題做分析
     news_text   = '\n'.join([
         f'• {n["title_zh"] or n["title_en"]}'
         for n in news_items[:8]
     ])
+
+    # 三大法人文字摘要
+    inst_text = '（無資料）'
+    if institutional.get('data'):
+        d = institutional['data']
+        date_str = institutional.get('date', '')
+        lines = [f'台股三大法人 ({date_str})：']
+        for key in ['外資', '投信', '自營合計', '三大合計']:
+            if key in d:
+                _, amt, _ = fmt_yi(d[key]['net'])
+                lines.append(f'  {key}：{amt}')
+        inst_text = '\n'.join(lines)
 
     prompt = f"""今天是 {today}。請用繁體中文回答，語氣像懂投資的朋友說重點。
 
@@ -280,17 +379,21 @@ def generate_analysis(market_rows, macro_data, news_items):
 【總體經濟】
 {macro_text}
 
+【台股三大法人動向】
+{inst_text}
+
 【今日重要新聞】
 {news_text}
 
-請分三段回答，每段3-5句，不要廢話不要條列：
+請分四段回答，每段2-3句，不要廢話不要條列：
 
 第一段【今天市場在說什麼】：漲跌主因？AI和半導體ETF透露什麼訊號？
 
-第二段【總體環境怎樣】：利率和債券數據的含義？對長期ETF投資者意味著什麼？
+第二段【台股籌碼解讀】：外資、投信方向一致還是對作？對後市有何暗示？
 
-第三段【本週其他新聞】：去'https://finance.yahoo.com/topic/latest-news/'
-找尋兩天內最新相關重大新聞(美股VIX、戰爭、油價、通膨、FED、經濟、日圓)後，列出3-4個，本周最值得追蹤的指標或事件。
+第三段【總體環境怎樣】：利率和債券數據的含義？對長期ETF投資者意味著什麼？
+
+第四段【本週需要注意】：有沒有值得留意的趨勢或風險？對持有VT、QQQ、SOXX、台灣50的人有什麼影響？
 
 最後一行固定寫：「以上是資訊整理，不是買賣建議。」"""
 
@@ -301,7 +404,7 @@ def generate_analysis(market_rows, macro_data, news_items):
                 {'role': 'system', 'content': '你是有十年經驗的投資研究員，說話簡潔有重點，只說有數據支撐的事。'},
                 {'role': 'user',   'content': prompt}
             ],
-            max_tokens=900,
+            max_tokens=600,
             temperature=0.6
         )
         return resp.choices[0].message.content
@@ -310,9 +413,9 @@ def generate_analysis(market_rows, macro_data, news_items):
 
 
 # ═══════════════════════════════════════════════════════════
-# 7. 生成 HTML
+# 8. 生成 HTML
 # ═══════════════════════════════════════════════════════════
-def generate_html(market_rows, macro_data, news_items, giant_summaries, analysis_text):
+def generate_html(market_rows, macro_data, news_items, giant_summaries, analysis_text, institutional):
     today     = datetime.now().strftime('%Y年%m月%d日')
     weekday   = ['週一','週二','週三','週四','週五','週六','週日'][datetime.now().weekday()]
     timestamp = datetime.now().strftime('%H:%M UTC')
@@ -361,15 +464,41 @@ def generate_html(market_rows, macro_data, news_items, giant_summaries, analysis
         </div>'''
 
     # AI分析段落
+    # 三大法人HTML
+    inst_html = ''
+    if institutional.get('data'):
+        d = institutional['data']
+        date_label = institutional.get('date', '前一交易日')
+        order = [('外資', '外資及陸資'), ('投信', '投信'), ('自營合計', '自營商合計'), ('三大合計', '三大法人合計')]
+        for key, label in order:
+            if key not in d:
+                continue
+            net = d[key]['net']
+            arrow, amt, color = fmt_yi(net)
+            buy_yi = d[key]['buy'] / 100_000
+            sell_yi = d[key]['sell'] / 100_000
+            # 特別標記三大合計
+            weight = '700' if key == '三大合計' else '400'
+            border = f'border-top:1px solid #2a3347;margin-top:8px;padding-top:8px;' if key == '三大合計' else ''
+            inst_html += f'''<div class="macro-row" style="{border}">
+              <span style="font-weight:{weight};">{label}</span>
+              <span style="text-align:right;">
+                <span style="color:{color};font-weight:{weight};font-family:'IBM Plex Mono',monospace;">{arrow} {amt}</span>
+                <span class="muted" style="display:block;font-size:10px;">買{buy_yi:.1f}億 賣{sell_yi:.1f}億</span>
+              </span>
+            </div>'''
+        inst_date_html = f'<div class="muted" style="font-size:10px;margin-bottom:10px;">資料日期：{date_label}</div>'
+        inst_html = inst_date_html + inst_html
+    else:
+        inst_html = '<div class="macro-row muted">今日無資料（假日或API暫時無法連線）</div>'
+
+    # AI分析段落
     analysis_html = ''.join(f'<p>{p.strip()}</p>' for p in analysis_text.split('\n') if p.strip())
 
     return f'''<!DOCTYPE html>
 <html lang="zh-TW">
 <head>
 <meta charset="UTF-8">
-<META HTTP-EQUIV="PRAGMA" CONTENT="NO-CACHE">
-<META HTTP-EQUIV="EXPIRES" CONTENT="0">
-<META HTTP-EQUIV="CACHE-CONTROL" CONTENT="NO-CACHE">
 <meta name="viewport" content="width=device-width,initial-scale=1.0">
 <meta http-equiv="refresh" content="3600">
 <title>投資情報日報 · {today}</title>
@@ -450,6 +579,7 @@ tr:hover td{{background:rgba(245,158,11,.03);}}
 <div class="nav">
   <a href="#market">市場快照</a>
   <a href="#macro">總體經濟</a>
+  <a href="#inst">三大法人</a>
   <a href="#analysis">AI分析</a>
   <a href="#news">產業新聞</a>
   <a href="#giants">來源摘要</a>
@@ -470,6 +600,11 @@ tr:hover td{{background:rgba(245,158,11,.03);}}
     {macro_html}
   </div>
 
+  <div class="card" id="inst">
+    <div class="card-title">🏦 台股三大法人買賣超</div>
+    {inst_html}
+  </div>
+
   <div class="card full" id="analysis">
     <div class="card-title">🤖 今日AI分析</div>
     <div class="ai-analysis">{analysis_html}</div>
@@ -488,7 +623,7 @@ tr:hover td{{background:rgba(245,158,11,.03);}}
 </div>
 
 <div class="footer">
-  <div class="badge">● 每個交易日早上 07:00 自動更新</div><br><br>
+  <div class="badge">● 每個交易日早上 09:00 自動更新</div><br><br>
   資訊整理僅供參考 · 不構成投資建議<br>
   數據來源：yfinance · FRED · Google News RSS · TrendForce · SemiAnalysis · Groq Llama 3.3
 </div>
@@ -507,7 +642,7 @@ def save_html(html_content):
     print('✓ HTML已儲存 docs/index.html')
 
 
-def send_telegram(market_rows, github_user, repo_name):
+def send_telegram(market_rows, github_user, repo_name, institutional):
     today    = datetime.now().strftime('%Y/%m/%d')
     page_url = f'https://{github_user}.github.io/{repo_name}/'
 
@@ -518,11 +653,25 @@ def send_telegram(market_rows, github_user, repo_name):
     except:
         hi = ''
 
+    # 三大法人摘要
+    inst_lines = ''
+    if institutional.get('data'):
+        d = institutional['data']
+        date_label = institutional.get('date', '')
+        inst_lines = f'\n\n🏦 <b>三大法人 ({date_label})</b>\n'
+        for key, label in [('外資','外資'), ('投信','投信'), ('自營合計','自營'), ('三大合計','合計')]:
+            if key in d:
+                _, amt, _ = fmt_yi(d[key]['net'])
+                prefix = '└' if key == '三大合計' else '├'
+                inst_lines += f'{prefix} {label}：<b>{amt}</b>\n'
+        inst_lines = inst_lines.rstrip()
+
     msg = (
         f"📊 <b>投資日報 {today}</b>\n\n"
-        f"{hi}\n\n"
+        f"{hi}"
+        f"{inst_lines}\n\n"
         f"🔗 <a href='{page_url}'>點這裡看完整報告</a>\n"
-        f"<i>含：市場快照・總經指標・中文新聞・來源摘要・AI分析</i>"
+        f"<i>含：市場快照・總經指標・三大法人・中文新聞・AI分析</i>"
     )
     r = requests.post(
         f'https://api.telegram.org/bot{TELEGRAM_TOKEN}/sendMessage',
@@ -545,24 +694,27 @@ def main():
     print('2. 總體經濟...')
     macro_data = get_fred_data()
 
-    print('3. 新聞...')
+    print('3. 台股三大法人...')
+    institutional = get_twse_institutional()
+
+    print('4. 新聞...')
     news_items = get_news()
 
-    print('4. 翻譯新聞標題...')
+    print('5. 翻譯新聞標題...')
     news_items = translate_news(news_items)
 
-    print('5. 抓取來源摘要...')
+    print('6. 抓取來源摘要...')
     giant_summaries = get_giant_summaries()
 
-    print('6. AI主分析...')
-    analysis = generate_analysis(market_rows, macro_data, news_items)
+    print('7. AI主分析...')
+    analysis = generate_analysis(market_rows, macro_data, news_items, institutional)
 
-    print('7. 生成HTML...')
-    html = generate_html(market_rows, macro_data, news_items, giant_summaries, analysis)
+    print('8. 生成HTML...')
+    html = generate_html(market_rows, macro_data, news_items, giant_summaries, analysis, institutional)
     save_html(html)
 
-    print('8. Telegram通知...')
-    send_telegram(market_rows, github_user, repo_name)
+    print('9. Telegram通知...')
+    send_telegram(market_rows, github_user, repo_name, institutional)
 
     print('✓ 全部完成！')
 
