@@ -115,7 +115,7 @@ def get_twse_institutional():
     """
     # 嘗試最近幾天，避開假日
     results = {}
-    for days_back in range(1, 6):
+    for days_back in range(0, 6):
         target = (datetime.now() - timedelta(days=days_back)).strftime('%Y%m%d')
         try:
             r = requests.get(
