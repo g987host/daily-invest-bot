@@ -21,7 +21,7 @@ def get_market_data():
     symbols = {
         '道瓊工業': '^DJI',
         '美股S&P500': '^GSPC',
-        '那斯達克': '^IXIC',
+        '那斯達克100': '^NDX',
         '費城半導體': '^SOX',
         '德國股市': '^GDAXI',
         '法國股市': '^FCHI',
