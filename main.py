@@ -2,7 +2,7 @@ import os
 import feedparser
 import yfinance as yf
 import requests
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, timezone
 from groq import Groq
 
 # ── 環境變數 ──────────────────────────────────────────────
@@ -34,12 +34,15 @@ def get_market_data():
         '半導體ETF': 'SOXX',
         'AI科技 (BOTZ)': 'BOTZ'
     }
-
     rows = []
     for name, sym in symbols.items():
         try:
             t    = yf.Ticker(sym)
             hist = t.history(period='5d')
+            # ✅ 統一轉 UTC，過濾掉未完整收盤的 bar
+            now_utc = datetime.now(timezone.utc)
+            hist.index = hist.index.tz_convert('UTC')
+            hist = hist[hist.index < (now_utc - timedelta(minutes=30))]
             if len(hist) >= 2:
                 price = hist['Close'].iloc[-1]
                 prev  = hist['Close'].iloc[-2]
