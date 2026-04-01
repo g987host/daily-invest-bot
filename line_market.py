@@ -16,7 +16,7 @@ INDICES = [
     # 美股
     {'symbol': '^DJI',   'name': '道瓊工業',   'flag': '🇺🇸'},
     {'symbol': '^GSPC',  'name': 'S&P500',    'flag': '🇺🇸'},
-    {'symbol': '^IXIC',  'name': '那斯達克',      'flag': '🇺🇸'},
+    {'symbol': '^NDX',  'name': '那斯達克100',      'flag': '🇺🇸'},
     {'symbol': '^SOX',   'name': '費城半導體',   'flag': '🇺🇸'},
     {'symbol': 'TSM',   'name': '台積電ADR',   'flag': '🇺🇸'},
     # 歐股
@@ -26,26 +26,29 @@ INDICES = [
 ]
 
 def fetch_indices():
-    """用 yfinance 抓所有指數"""
     import yfinance as yf
+    from datetime import datetime, timedelta, timezone
 
     results = []
     for idx in INDICES:
         try:
             ticker = yf.Ticker(idx['symbol'])
-            hist = ticker.history(period='2d')
+            
+            # ✅ 改用 5d，保留緩衝，避免邊界問題
+            hist = ticker.history(period='5d')
+            
+            if len(hist) < 2:
+                continue
+
+            # ✅ 過濾掉「今天還沒收盤的資料」
+            # yfinance 有時會回傳當天不完整的 bar
+            now_utc = datetime.now(timezone.utc)
+            hist.index = hist.index.tz_convert('UTC')  # 統一轉成 UTC 比較
+            
+            # 只保留「收盤時間已超過 30 分鐘前」的資料（避免抓到當天未完整的 bar）
+            hist = hist[hist.index < (now_utc - timedelta(minutes=30))]
 
             if len(hist) < 2:
-                # 只有一天（例如休市後第一天）
-                if len(hist) == 1:
-                    close = hist['Close'].iloc[-1]
-                    results.append({
-                        **idx,
-                        'price': close,
-                        'change': 0,
-                        'pct': 0,
-                        'status': 'no_prev'
-                    })
                 continue
 
             prev  = hist['Close'].iloc[-2]
@@ -53,18 +56,21 @@ def fetch_indices():
             change = close - prev
             pct    = (change / prev) * 100
 
+            # ✅ 順便印出日期，方便驗證
+            latest_date = hist.index[-1].strftime('%Y-%m-%d')
+            print(f"  ✓ {idx['name']}: {close:,.2f} ({change:+.2f} / {pct:+.2f}%) [{latest_date}]")
+
             results.append({
                 **idx,
                 'price':  close,
                 'change': change,
                 'pct':    pct,
-                'status': 'ok'
+                'status': 'ok',
+                'date':   latest_date  # 建議也存起來方便 debug
             })
-            print(f"  ✓ {idx['name']}: {close:,.2f} ({change:+.2f} / {pct:+.2f}%)")
 
         except Exception as e:
             print(f"  ✗ {idx['name']}: {e}")
-
     return results
 
 
@@ -115,7 +121,7 @@ def format_message(results):
             )
 
         sym = r['symbol']
-        if sym in ['^GSPC', '^IXIC', '^DJI','^SOX','TSM']:
+        if sym in ['^GSPC', '^NDX', '^DJI','^SOX','TSM']:
             us_lines.append(line)
         else:
             eu_lines.append(line)
