@@ -5,7 +5,7 @@ line_market.py
 """
 import os
 import requests
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, timezone
 import pytz
 
 # ══════════════════════════════════════════════
