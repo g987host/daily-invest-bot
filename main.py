@@ -18,6 +18,7 @@ groq_client = Groq(api_key=GROQ_API_KEY)
 # 1. 市場數據
 # ═══════════════════════════════════════════════════════════
 def get_market_data():
+
     symbols = {
         '道瓊工業': '^DJI',
         '美股S&P500': '^GSPC',
@@ -34,28 +35,44 @@ def get_market_data():
         '半導體ETF': 'SOXX',
         'AI科技 (BOTZ)': 'BOTZ'
     }
+
     rows = []
+
     for name, sym in symbols.items():
+
         try:
-            t    = yf.Ticker(sym)
-            hist = t.history(period='5d')
-            # ✅ 統一轉 UTC，過濾掉未完整收盤的 bar
-            now_utc = datetime.now(timezone.utc)
-            hist.index = hist.index.tz_convert('UTC')
-            hist = hist[hist.index < (now_utc - timedelta(minutes=30))]
+
+            t = yf.Ticker(sym)
+
+            hist = t.history(period='7d', interval='1d')
+
+            # 刪掉今天尚未收盤資料
+            today = pd.Timestamp.utcnow().date()
+            hist = hist[hist.index.date < today]
+
             if len(hist) >= 2:
+
                 price = hist['Close'].iloc[-1]
                 prev  = hist['Close'].iloc[-2]
-                pct   = (price - prev) / prev * 100
+
+                pct = (price - prev) / prev * 100
+
                 arrow = '▲' if pct >= 0 else '▼'
                 color = '#22c55e' if pct >= 0 else '#ef4444'
+
                 rows.append({
-                    'name': name, 'price': f'{price:.2f}',
-                    'pct': f'{pct:+.2f}%', 'arrow': arrow, 'color': color,
+                    'name': name,
+                    'price': f'{price:.2f}',
+                    'pct': f'{pct:+.2f}%',
+                    'arrow': arrow,
+                    'color': color,
                     'raw_pct': pct
                 })
+
         except Exception as e:
+
             print(f'跳過 {sym}: {e}')
+
     return rows
 
 
