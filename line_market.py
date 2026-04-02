@@ -16,48 +16,50 @@ INDICES = [
     # 美股
     {'symbol': '^DJI',   'name': '道瓊工業',   'flag': '🇺🇸'},
     {'symbol': '^GSPC',  'name': 'S&P500',    'flag': '🇺🇸'},
-    {'symbol': '^NDX',  'name': '那斯達克100',      'flag': '🇺🇸'},
-    {'symbol': '^SOX',   'name': '費城半導體',   'flag': '🇺🇸'},
-    {'symbol': 'TSM',   'name': '台積電ADR',   'flag': '🇺🇸'},
+    {'symbol': '^NDX',   'name': '那斯達克100', 'flag': '🇺🇸'},
+    {'symbol': '^SOX',   'name': '費城半導體', 'flag': '🇺🇸'},
+    {'symbol': 'TSM',    'name': '台積電ADR',  'flag': '🇺🇸'},
+
     # 歐股
-    {'symbol': '^GDAXI', 'name': '德國股市',         'flag': '🇩🇪'},
-    {'symbol': '^FTSE',  'name': '英國股市',    'flag': '🇬🇧'},
-    {'symbol': '^FCHI',  'name': '法國股市',      'flag': '🇫🇷'},
+    {'symbol': '^GDAXI', 'name': '德國股市',   'flag': '🇩🇪'},
+    {'symbol': '^FTSE',  'name': '英國股市',   'flag': '🇬🇧'},
+    {'symbol': '^FCHI',  'name': '法國股市',   'flag': '🇫🇷'},
 ]
 
 def fetch_indices():
+
     import yfinance as yf
-    from datetime import datetime, timedelta, timezone
+    import pandas as pd
 
     results = []
+
     for idx in INDICES:
+
         try:
+
             ticker = yf.Ticker(idx['symbol'])
-            
-            # ✅ 改用 5d，保留緩衝，避免邊界問題
-            hist = ticker.history(period='5d')
-            
+
+            # ✅ 使用 daily K
+            hist = ticker.history(period='7d', interval='1d')
+
             if len(hist) < 2:
                 continue
 
-            # ✅ 過濾掉「今天還沒收盤的資料」
-            # yfinance 有時會回傳當天不完整的 bar
-            now_utc = datetime.now(timezone.utc)
-            hist.index = hist.index.tz_convert('UTC')  # 統一轉成 UTC 比較
-            
-            # 只保留「收盤時間已超過 30 分鐘前」的資料（避免抓到當天未完整的 bar）
-            hist = hist[hist.index < (now_utc - timedelta(minutes=30))]
+            # ✅ 移除今天未完成的 bar
+            today = pd.Timestamp.utcnow().date()
+            hist = hist[hist.index.date < today]
 
             if len(hist) < 2:
                 continue
 
             prev  = hist['Close'].iloc[-2]
             close = hist['Close'].iloc[-1]
+
             change = close - prev
             pct    = (change / prev) * 100
 
-            # ✅ 順便印出日期，方便驗證
             latest_date = hist.index[-1].strftime('%Y-%m-%d')
+
             print(f"  ✓ {idx['name']}: {close:,.2f} ({change:+.2f} / {pct:+.2f}%) [{latest_date}]")
 
             results.append({
@@ -66,13 +68,14 @@ def fetch_indices():
                 'change': change,
                 'pct':    pct,
                 'status': 'ok',
-                'date':   latest_date  # 建議也存起來方便 debug
+                'date':   latest_date
             })
 
         except Exception as e:
-            print(f"  ✗ {idx['name']}: {e}")
-    return results
 
+            print(f"  ✗ {idx['name']}: {e}")
+
+    return results
 
 # ══════════════════════════════════════════════
 # 2. 組裝 LINE 訊息
