@@ -36,7 +36,7 @@ def fetch_indices():
 
             if len(hist) < 2:
                 if len(hist) == 1:
-                    close = hist['Close'].iloc[-1]
+                    close = ticker.fast_info['last_price']
                     results.append({
                         **idx,
                         'price': close,
@@ -45,9 +45,12 @@ def fetch_indices():
                         'status': 'no_prev'
                     })
                 continue
-
+            eu_symbols = {'^GDAXI', '^FCHI', '^FTSE'}
             prev  = hist['Close'].iloc[-2]
             close = hist['Close'].iloc[-1]
+            if idx['symbol'] in eu_symbols:
+                close = ticker.fast_info['last_price']
+                prev  = hist['Close'].iloc[-1]  # 用 hist 最新的當 prev
             change = close - prev
             pct    = (change / prev) * 100
             results.append({
