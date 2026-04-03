@@ -27,54 +27,39 @@ INDICES = [
 ]
 
 def fetch_indices():
-
     import yfinance as yf
-    import pandas as pd
-
     results = []
-
     for idx in INDICES:
-
         try:
-
             ticker = yf.Ticker(idx['symbol'])
-
-            # ✅ 使用 daily K
-            hist = ticker.history(period='7d', interval='1d')
+            hist = ticker.history(period='5d')  # ✅ 5d 保留緩衝就夠了
 
             if len(hist) < 2:
-                continue
-
-            # ✅ 移除今天未完成的 bar
-            today = pd.Timestamp.utcnow().date()
-            hist = hist[hist.index.date < today]
-
-            if len(hist) < 2:
+                if len(hist) == 1:
+                    close = hist['Close'].iloc[-1]
+                    results.append({
+                        **idx,
+                        'price': close,
+                        'change': 0,
+                        'pct': 0,
+                        'status': 'no_prev'
+                    })
                 continue
 
             prev  = hist['Close'].iloc[-2]
             close = hist['Close'].iloc[-1]
-
             change = close - prev
             pct    = (change / prev) * 100
-
-            latest_date = hist.index[-1].strftime('%Y-%m-%d')
-
-            print(f"  ✓ {idx['name']}: {close:,.2f} ({change:+.2f} / {pct:+.2f}%) [{latest_date}]")
-
             results.append({
                 **idx,
                 'price':  close,
                 'change': change,
                 'pct':    pct,
-                'status': 'ok',
-                'date':   latest_date
+                'status': 'ok'
             })
-
+            print(f"  ✓ {idx['name']}: {close:,.2f} ({change:+.2f} / {pct:+.2f}%)")
         except Exception as e:
-
             print(f"  ✗ {idx['name']}: {e}")
-
     return results
 
 # ══════════════════════════════════════════════
