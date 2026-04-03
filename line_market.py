@@ -36,7 +36,7 @@ def fetch_indices():
 
             if len(hist) < 2:
                 if len(hist) == 1:
-                    close = ticker.fast_info['last_price']
+                    close = hist['Close'].iloc[-1]
                     results.append({
                         **idx,
                         'price': close,
