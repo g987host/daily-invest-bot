@@ -18,6 +18,7 @@ groq_client = Groq(api_key=GROQ_API_KEY)
 # 1. 市場數據
 # ═══════════════════════════════════════════════════════════
 def get_market_data():
+    from datetime import date, timedelta
     symbols = {
         '道瓊工業': '^DJI',
         '美股S&P500': '^GSPC',
@@ -35,13 +36,20 @@ def get_market_data():
         'AI科技 (BOTZ)': 'BOTZ'
     }
     rows = []
+    # ✅ 用明確日期取代 period，往前抓 7 天確保有足夠資料
+    end   = date.today() + timedelta(days=1)  # +1 確保今天資料不被截掉
+    start = date.today() - timedelta(days=7)
     for name, sym in symbols.items():
         try:
+            eu_symbols = {'^GDAXI', '^FCHI', '^FTSE'}
             t    = yf.Ticker(sym)
-            hist = t.history(period='5d')  # ✅ 5d 保留緩衝就夠了
+            hist = t.history(start=start, end=end)            
             if len(hist) >= 2:
                 price = hist['Close'].iloc[-1]
                 prev  = hist['Close'].iloc[-2]
+                if sym in eu_symbols:
+                    price = t.fast_info['last_price']
+                    prev  = hist['Close'].iloc[-1]  # 用 hist 最新的當 prev
                 pct   = (price - prev) / prev * 100
                 arrow = '▲' if pct >= 0 else '▼'
                 color = '#22c55e' if pct >= 0 else '#ef4444'
@@ -49,7 +57,9 @@ def get_market_data():
                     'name': name, 'price': f'{price:.2f}',
                     'pct': f'{pct:+.2f}%', 'arrow': arrow, 'color': color,
                     'raw_pct': pct
-                })
+                })               
+            # ✅ 印出實際日期，方便確認拿到的是哪幾天
+            #print(f'  [{sym}] 最後兩筆: {hist.index[-2].date()} / {hist.index[-1].date()}')
         except Exception as e:
             print(f'跳過 {sym}: {e}')
     return rows
