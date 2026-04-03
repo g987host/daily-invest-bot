@@ -58,6 +58,13 @@ def get_market_data():
                     'pct': f'{pct:+.2f}%', 'arrow': arrow, 'color': color,
                     'raw_pct': pct
                 })               
+            elif len(hist) == 1:
+                price = hist['Close'].iloc[-1]
+                rows.append({
+                    'name': name, 'price': f'{price:.2f}',
+                    'pct': 'N/A', 'arrow': '-', 'color': '#888888',
+                    'raw_pct': 0
+                })
             # ✅ 印出實際日期，方便確認拿到的是哪幾天
             #print(f'  [{sym}] 最後兩筆: {hist.index[-2].date()} / {hist.index[-1].date()}')
         except Exception as e:
