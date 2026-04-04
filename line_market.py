@@ -26,31 +26,40 @@ INDICES = [
     {'symbol': '^FCHI',  'name': '法國股市',   'flag': '🇫🇷'},
 ]
 
+EU_SYMBOLS = {'^GDAXI', '^FCHI', '^FTSE'}
+
 def fetch_indices():
     import yfinance as yf
+    from datetime import date, timedelta
     results = []
+    yesterday = date.today() - timedelta(days=1)
+    end   = date.today() + timedelta(days=1)
+    start = date.today() - timedelta(days=7)
     for idx in INDICES:
         try:
             ticker = yf.Ticker(idx['symbol'])
-            hist = ticker.history(period='5d')  # ✅ 5d 保留緩衝就夠了
+            hist = ticker.history(start=start, end=end)
 
-            if len(hist) < 2:
-                if len(hist) == 1:
-                    close = hist['Close'].iloc[-1]
-                    results.append({
-                        **idx,
-                        'price': close,
-                        'change': 0,
-                        'pct': 0,
-                        'status': 'no_prev'
-                    })
-                continue
-            eu_symbols = {'^GDAXI', '^FCHI', '^FTSE'}
-            prev  = hist['Close'].iloc[-2]
-            close = hist['Close'].iloc[-1]
-            if idx['symbol'] in eu_symbols:
+            if idx['symbol'] in EU_SYMBOLS:
+                # 歐洲：直接用 fast_info，不做日期判斷
                 close = ticker.fast_info['last_price']
-                prev  = hist['Close'].iloc[-1]  # 用 hist 最新的當 prev
+                prev  = hist['Close'].iloc[-1]
+            else:
+                # 美股：檢查最新一筆是否為昨天
+                if len(hist) < 2 or hist.index[-1].date() != yesterday:
+                    if len(hist) >= 1:
+                        close = hist['Close'].iloc[-1]
+                        results.append({
+                            **idx,
+                            'price': close,
+                            'change': 0,
+                            'pct': 0,
+                            'status': 'no_prev'
+                        })
+                    continue
+                close = hist['Close'].iloc[-1]
+                prev  = hist['Close'].iloc[-2]
+
             change = close - prev
             pct    = (change / prev) * 100
             results.append({
