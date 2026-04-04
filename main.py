@@ -13,7 +13,7 @@ FRED_API_KEY     = os.environ.get('FRED_API_KEY', '')
 
 groq_client = Groq(api_key=GROQ_API_KEY)
 
-
+EU_SYMBOLS = {'^GDAXI', '^FCHI', '^FTSE'}
 # ═══════════════════════════════════════════════════════════
 # 1. 市場數據
 # ═══════════════════════════════════════════════════════════
@@ -39,34 +39,38 @@ def get_market_data():
     # ✅ 用明確日期取代 period，往前抓 7 天確保有足夠資料
     end   = date.today() + timedelta(days=1)  # +1 確保今天資料不被截掉
     start = date.today() - timedelta(days=7)
+    yesterday = date.today() - timedelta(days=1)
     for name, sym in symbols.items():
-        try:
-            eu_symbols = {'^GDAXI', '^FCHI', '^FTSE'}
+       try:
             t    = yf.Ticker(sym)
-            hist = t.history(start=start, end=end)            
-            if len(hist) >= 2:
+            hist = t.history(start=start, end=end)
+
+            if sym in EU_SYMBOLS:
+                # 歐洲：直接用 fast_info，不做日期判斷
+                price = t.fast_info['last_price']
+                prev  = hist['Close'].iloc[-1]
+            else:
+                # 美股：檢查最新一筆是否為昨天
+                if len(hist) < 2 or hist.index[-1].date() != yesterday:
+                    if len(hist) >= 1:
+                        price = hist['Close'].iloc[-1]
+                        rows.append({
+                            'name': name, 'price': f'{price:.2f}',
+                            'pct': 'N/A', 'arrow': '-', 'color': '#888888',
+                            'raw_pct': 0
+                        })
+                    continue
                 price = hist['Close'].iloc[-1]
                 prev  = hist['Close'].iloc[-2]
-                if sym in eu_symbols:
-                    price = t.fast_info['last_price']
-                    prev  = hist['Close'].iloc[-1]  # 用 hist 最新的當 prev
-                pct   = (price - prev) / prev * 100
-                arrow = '▲' if pct >= 0 else '▼'
-                color = '#22c55e' if pct >= 0 else '#ef4444'
-                rows.append({
-                    'name': name, 'price': f'{price:.2f}',
-                    'pct': f'{pct:+.2f}%', 'arrow': arrow, 'color': color,
-                    'raw_pct': pct
-                })               
-            elif len(hist) == 1:
-                price = hist['Close'].iloc[-1]
-                rows.append({
-                    'name': name, 'price': f'{price:.2f}',
-                    'pct': 'N/A', 'arrow': '-', 'color': '#888888',
-                    'raw_pct': 0
-                })
-            # ✅ 印出實際日期，方便確認拿到的是哪幾天
-            #print(f'  [{sym}] 最後兩筆: {hist.index[-2].date()} / {hist.index[-1].date()}')
+
+            pct   = (price - prev) / prev * 100
+            arrow = '▲' if pct >= 0 else '▼'
+            color = '#22c55e' if pct >= 0 else '#ef4444'
+            rows.append({
+                'name': name, 'price': f'{price:.2f}',
+                'pct': f'{pct:+.2f}%', 'arrow': arrow, 'color': color,
+                'raw_pct': pct
+            })
         except Exception as e:
             print(f'跳過 {sym}: {e}')
     return rows
