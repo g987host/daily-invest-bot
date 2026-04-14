@@ -73,8 +73,8 @@ def get_market_data():
                 'pct': f'{pct:+.2f}%', 'arrow': arrow, 'color': color,
                 'raw_pct': pct
             })
-        except Exception as e:
-            print(f'跳過 {sym}: {e}')
+       except Exception as e:
+           print(f'跳過 {sym}: {e}')
     return rows
 
 
