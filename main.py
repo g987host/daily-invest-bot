@@ -686,7 +686,7 @@ def send_telegram(market_rows, github_user, repo_name, institutional):
         hi    = f"最強：{best['name']} <b>{best['pct']}</b>\n最弱：{worst['name']} <b>{worst['pct']}</b>"
         '''
         top10 = market_rows[:10]
-        lines = "\n".join(f"{r['name']} <b>{r['pct']}</b>" for r in top10)
+        lines = "\n".join(f"{r['name']}  <b>{r['price']}  {r['pct']}</b>" for r in top10)
         hi = f"市場概況：\n{lines}"
     except:
         hi = ''
