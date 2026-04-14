@@ -51,6 +51,7 @@ def get_market_data():
                 prev  = hist['Close'].iloc[-1]
             else:
                 # 美股：檢查最新一筆是否為昨天
+                '''
                 if len(hist) < 2 or hist.index[-1].date() != yesterday:
                     if len(hist) >= 1:
                         price = hist['Close'].iloc[-1]
@@ -60,6 +61,7 @@ def get_market_data():
                             'raw_pct': 0
                         })
                     continue
+                '''
                 price = hist['Close'].iloc[-1]
                 prev  = hist['Close'].iloc[-2]
 
